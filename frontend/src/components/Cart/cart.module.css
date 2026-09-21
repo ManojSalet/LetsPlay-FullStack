@@ -1,0 +1,51 @@
+.MainContainer{
+    background-color: var(--main-card-bg-color);
+    border-radius: 10px !important;
+    box-shadow: var(--main-box-shadow);
+}
+
+.ListCart{
+    width: 100%;
+    height: 130px;
+    background-color: var(--main-card-bg-color);
+    box-shadow: var(--main-box-shadow);
+}
+
+.CartScrollContainer{
+    height: 400px;
+    overflow-y: scroll;
+    background-color: var(--main-card-bg-color);
+}
+
+.CartImg{
+    width: 100px;
+}
+
+
+.MainCheckout{
+    background-color: var(--main-color);
+    color: var(--main-text-color);
+}
+
+.Input{
+}
+
+.Label{
+    color: black;
+}
+
+.CheckBtn{
+    background-color: #0504AA; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.CheckBtn:hover{
+    background-color: wheat;
+    color: black;
+    transition: .5s !important;
+}

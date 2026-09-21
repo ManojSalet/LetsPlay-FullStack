@@ -1,0 +1,528 @@
+{
+  "name": "Het",
+  "email": "sinojiyahet189@gmail.com",
+  "password": "Het1809"
+}
+
+{
+  "name": "Mayank",
+  "email": "mayankbhalu029@gmail.com",
+  "password": "mayank029"
+}
+
+{
+    "details": [
+        {
+            "name": "Amit",
+            "houseNo": "45A",
+            "street": "Pine Avenue",
+            "landmark": "Near Botanical Garden",
+            "pin": 400001,
+            "district": "Mumbai",
+            "state": "Maharashtra",
+            "country": "India",
+            "contact": 9876543211,
+            "select": false
+        }
+    ]
+}
+
+{
+    "details": [
+        {
+            "name": "Sita",
+            "houseNo": "78",
+            "street": "Green Park Road",
+            "landmark": "Opposite Central Park",
+            "pin": 110001,
+            "district": "New Delhi",
+            "state": "Delhi",
+            "country": "India",
+            "contact": 9876543212,
+            "select": false
+        }
+    ]
+}
+
+{
+    "name": "Indoor Sports",
+    "description": "Sports played within the confines of a building or structure, often focused on agility, skill, and strategy."
+}
+
+{
+    "name": "Outdoor Sports",
+    "description": "Sports played in open-air environments, emphasizing endurance, teamwork, and competition."
+}
+
+===========================================================================================
+{
+    "name": "Badminton",
+    "description": "A racket sport played using racquets to hit a shuttlecock across a net. It can be played as singles or doubles.",
+    "category": "66f7a164ceeb06bb773cc653"
+}
+
+{
+    "name": "Table Tennis",
+    "description": "A sport in which two or four players hit a lightweight ball, also known as a ping-pong ball, back and forth across a table.",
+    "category": "66f7a164ceeb06bb773cc653"
+}
+
+{
+    "name": "Squash",
+    "description": "A racquet sport played by two players (singles) or four players (doubles) in a four-walled court, with a small, hollow rubber ball.",
+    "category": "66f7a164ceeb06bb773cc653"
+}
+
+{
+    "name": "Indoor Volleyball",
+    "description": "A team sport in which two teams of six players are separated by a net. Teams score points by grounding the ball on the other team's court.",
+    "category": "66f7a164ceeb06bb773cc653"
+}
+
+{
+    "name": "Soccer",
+    "description": "A team sport played between two teams of eleven players with a spherical ball. It is the most popular sport in the world.",
+    "category": "66f7a180ceeb06bb773cc655"
+}
+
+{
+    "name": "Basketball",
+    "description": "A team sport where two teams, typically of five players each, opposing one another on a rectangular court, compete to shoot the ball through the opponent's hoop.",
+    "category": "66f7a180ceeb06bb773cc655"
+}
+
+{
+    "name": "Cricket",
+    "description": "A bat-and-ball game played between two teams of eleven players on a circular field, at the center of which is a 22-yard pitch.",
+    "category": "66f7a180ceeb06bb773cc655"
+}
+
+{
+    "name": "Tennis",
+    "description": "A racket sport that can be played individually against a single opponent or between two teams of two players each. Players use a racket to strike a felt-covered rubber ball over a net into the opponent's court.",
+    "category": "66f7a180ceeb06bb773cc655"
+}
+
+===========================================================================================
+
+{
+    "name": "Badminton Shuttlecock",
+    "description": "A feathered shuttlecock used in badminton. It is designed for high-speed play and is available in different speeds for various conditions.",
+    "sport": "66f7a2b6ceeb06bb773cc658"
+}
+
+{
+    "name": "Badminton Racket",
+    "description": "A lightweight racket used to hit the shuttlecock in badminton. Available in various sizes and materials to suit different playing styles.",
+    "sport": "66f7a2b6ceeb06bb773cc658"
+}
+
+{
+    "name": "Table Tennis Racket",
+    "description": "A high-quality paddle designed for table tennis, featuring a comfortable grip and advanced rubber for optimal spin and control.",
+    "sport": "66f7a2d2ceeb06bb773cc65c"
+}
+
+{
+    "name": "Table Tennis Ball",
+    "description": "A durable 40mm white ball designed for professional table tennis play, offering excellent bounce and spin.",
+    "sport": "66f7a2d2ceeb06bb773cc65c"
+}
+
+{
+    "name": "Squash Racket",
+    "description": "A lightweight and durable racket designed for optimal control and power in squash games.",
+    "sport": "66f7a308ceeb06bb773cc660"
+}
+
+{
+    "name": "Squash Ball",
+    "description": "High-quality rubber squash ball suitable for all levels of play, providing excellent bounce and durability.",
+    "sport": "66f7a308ceeb06bb773cc660"
+}
+
+{
+    "name": "Volleyball",
+    "description": "A regulation size indoor volleyball, designed for optimal performance on the court.",
+    "sport": "66f7a344ceeb06bb773cc664"
+}
+
+{
+    "name": "Volleyball Net",
+    "description": "A durable volleyball net suitable for indoor play, ensuring high visibility and strong tension.",
+    "sport": "66f7a344ceeb06bb773cc664"
+}
+
+{
+    "name": "Soccer Ball",
+    "description": "A high-quality soccer ball designed for durability and optimal performance on the field.",
+    "sport": "66f7a393ceeb06bb773cc668"
+}
+
+{
+    "name": "Soccer Goal",
+    "description": "A portable soccer goal ideal for practice and matches, made with durable materials.",
+    "sport": "66f7a393ceeb06bb773cc668"
+}
+
+{
+    "name": "Basketball",
+    "description": "A high-quality basketball designed for indoor and outdoor play, offering excellent grip and durability.",
+    "sport": "66f7a3a8ceeb06bb773cc66c"
+}
+
+{
+    "name": "Basketball Hoop",
+    "description": "An adjustable basketball hoop suitable for all ages, perfect for backyard or driveway use.",
+    "sport": "66f7a3a8ceeb06bb773cc66c"
+}
+
+{
+    "name": "Bat",
+    "description": "High-quality cricket bat made from premium English willow, designed for optimal performance and comfort. Perfect for players of all skill levels.",
+    "sport": "66f7a3d6ceeb06bb773cc670"
+}
+
+{
+    "name": "Cricket Ball",
+    "description": "A high-quality cricket ball suitable for both practice and matches, ensuring consistent performance.",
+    "sport": "66f7a3d6ceeb06bb773cc670"
+}
+
+{
+    "name": "Cricket Helmet",
+    "description": "A protective cricket helmet featuring a strong outer shell and comfortable padding, designed for safety during batting.",
+    "sport": "66f7a3d6ceeb06bb773cc670"
+}
+
+{
+    "name": "Cricket Pads",
+    "description": "Lightweight batting pads designed to provide protection while allowing freedom of movement. Suitable for all playing conditions.",
+    "sport": "66f7a3d6ceeb06bb773cc670"
+}
+
+{
+    "name": "Cricket Gloves",
+    "description": "Durable cricket gloves with excellent grip and comfort. Designed to protect hands while ensuring a firm hold on the bat.",
+    "sport": "66f7a3d6ceeb06bb773cc670"
+}
+
+{
+    "name": "Tennis Racket",
+    "description": "Lightweight tennis racket made from high-quality graphite, offering excellent control and power. Ideal for both beginners and advanced players.",
+    "sport": "66f7a3fcceeb06bb773cc674"
+}
+
+{
+    "name": "Tennis Balls",
+    "description": "Professional-grade tennis balls designed for optimal bounce and durability. Suitable for both indoor and outdoor play.",
+    "sport": "66f7a3fcceeb06bb773cc674"
+}
+
+{
+    "name": "Tennis Net",
+    "description": "High-quality tennis net with reinforced edges, designed for easy setup and durability. Perfect for practice and matches.",
+    "sport": "66f7a3fcceeb06bb773cc674"
+}
+
+====================================================================================
+{
+    "name": "Badminton Racket",
+    "description": "Lightweight and durable badminton racket designed for superior control and power. Ideal for both casual and competitive players.",
+    "product_images": [
+        "https://example.com/images/badminton_racket1.jpg",
+        "https://example.com/images/badminton_racket2.jpg"
+    ],
+    "qty": 50,
+    "discountPer": 10,
+    "price": 2500.00,
+    "selling_price": 2250.00,
+    "equipment": "66f7a4acceeb06bb773cc678"
+}
+
+{
+    "name": "Badminton Shuttlecock",
+    "description": "High-quality feather shuttlecock designed for professional play. Offers excellent flight stability and durability.",
+    "product_images": [
+        "https://example.com/images/shuttlecock1.jpg",
+        "https://example.com/images/shuttlecock2.jpg"
+    ],
+    "qty": 100,
+    "discountPer": 5,
+    "price": 800.00,
+    "selling_price": 760.00,
+    "equipment": "66f7a4c6ceeb06bb773cc67c"
+}
+
+{
+    "name": "Butterfly Timo Boll ALC",
+    "description": "A premium-quality racket designed for aggressive play, featuring Arylate-Carbon for enhanced speed and control.",
+    "product_images": [
+        "https://example.com/images/butterfly_timo_boll.jpg"
+    ],
+    "qty": 25,
+    "discountPer": 10,
+    "price": 2500.00,
+    "selling_price": 2250.00,
+    "equipment": "66f7a522ceeb06bb773cc680"
+}
+
+{
+    "name": "Stiga Pro Carbon",
+    "description": "An advanced racket with a lightweight design, ideal for players seeking speed and precision in their game.",
+    "product_images": [
+        "https://example.com/images/stiga_pro_carbon.jpg"
+    ],
+    "qty": 40,
+    "discountPer": 5,
+    "price": 1500.00,
+    "selling_price": 1425.00,
+    "equipment": "66f7a522ceeb06bb773cc680"
+}
+
+{
+    "name": "DHS Hurricane II",
+    "description": "A versatile racket that provides excellent spin and control, suitable for all skill levels.",
+    "product_images": [
+        "https://example.com/images/dhs_hurricane_ii.jpg"
+    ],
+    "qty": 60,
+    "discountPer": 8,
+    "price": 1200.00,
+    "selling_price": 1104.00,
+    "equipment": "66f7a522ceeb06bb773cc680"
+}
+
+{
+    "name": "Butterfly 40+ Table Tennis Ball",
+    "description": "High-quality, durable ball designed for professional play, featuring seamless construction for consistent performance.",
+    "product_images": [
+        "https://example.com/images/butterfly_40+.jpg"
+    ],
+    "qty": 100,
+    "discountPer": 15,
+    "price": 300.00,
+    "selling_price": 255.00,
+    "equipment": "66f7a543ceeb06bb773cc684"
+}
+
+{
+    "name": "DHS 3-Star Table Tennis Ball",
+    "description": "Professional-grade 3-star ball suitable for tournaments, offering excellent spin and bounce.",
+    "product_images": [
+        "https://example.com/images/dhs_3_star.jpg"
+    ],
+    "qty": 80,
+    "discountPer": 10,
+    "price": 250.00,
+    "selling_price": 225.00,
+    "equipment": "66f7a543ceeb06bb773cc684"
+}
+
+{
+    "name": "Head Graphene 360 Speed Squash Racket",
+    "description": "Designed for advanced players, this racket offers excellent control and power, featuring Graphene 360 technology for enhanced stability.",
+    "product_images": [
+        "https://example.com/images/head_graphene_speed.jpg"
+    ],
+    "qty": 50,
+    "discountPer": 20,
+    "price": 150.00,
+    "selling_price": 120.00,
+    "equipment": "66f7a593ceeb06bb773cc688"
+}
+
+{
+    "name": "Dunlop Sonic Core Squash Racket",
+    "description": "A lightweight and responsive racket ideal for players seeking a balance of power and precision, featuring Sonic Core technology for better shock absorption.",
+    "product_images": [
+        "https://example.com/images/dunlop_sonic_core.jpg"
+    ],
+    "qty": 40,
+    "discountPer": 15,
+    "price": 130.00,
+    "selling_price": 110.00,
+    "equipment": "66f7a593ceeb06bb773cc688"
+}
+
+{
+    "name": "Dunlop Pro Squash Ball",
+    "description": "The official ball of the PSA World Tour, offering excellent durability and consistent bounce, ideal for competitive play.",
+    "product_images": [
+        "https://example.com/images/dunlop_pro_ball.jpg"
+    ],
+    "qty": 100,
+    "discountPer": 10,
+    "price": 12.00,
+    "selling_price": 10.80,
+    "equipment": "66f7a5aaceeb06bb773cc68c"
+}
+
+{
+    "name": "Wilson Ultra Squash Ball",
+    "description": "Designed for advanced players, this ball features a unique rubber formulation for a superior feel and performance on the court.",
+    "product_images": [
+        "https://example.com/images/wilson_ultra_ball.jpg"
+    ],
+    "qty": 80,
+    "discountPer": 5,
+    "price": 10.00,
+    "selling_price": 9.50,
+    "equipment": "66f7a5aaceeb06bb773cc68c"
+}
+
+{
+    "name": "Mikasa V300W Volleyball",
+    "description": "The official FIVB game ball, designed for superior control and durability. Made with a soft touch and excellent flight stability.",
+    "product_images": [
+        "https://example.com/images/mikasa_v300w.jpg"
+    ],
+    "qty": 50,
+    "discountPer": 15,
+    "price": 40.00,
+    "selling_price": 34.00,
+    "equipment": "66f7a5f1ceeb06bb773cc690"
+}
+
+{
+    "name": "Champion Sports Volleyball Net",
+    "description": "High-quality volleyball net designed for both indoor and outdoor use. Features durable nylon construction and reinforced edges for maximum longevity.",
+    "product_images": [
+        "https://example.com/images/champion_volleyball_net.jpg"
+    ],
+    "qty": 30,
+    "discountPer": 10,
+    "price": 50.00,
+    "selling_price": 45.00,
+    "equipment": "66f7a603ceeb06bb773cc694"
+}
+
+{
+    "name": "Adidas Tango España Soccer Ball",
+    "description": "Official replica of the Tango España, featuring a classic design with durable materials for optimal performance on the field.",
+    "product_images": [
+        "https://example.com/images/adidas_tango_soccer_ball.jpg"
+    ],
+    "qty": 50,
+    "discountPer": 15,
+    "price": 30.00,
+    "selling_price": 25.50,
+    "equipment": "66f7a64bceeb06bb773cc698"
+}
+
+{
+    "name": "Portable Soccer Goal",
+    "description": "Durable and lightweight portable soccer goal, perfect for training or recreational use. Easy to set up and take down, suitable for all ages.",
+    "product_images": [
+        "https://example.com/images/portable_soccer_goal.jpg"
+    ],
+    "qty": 25,
+    "discountPer": 10,
+    "price": 120.00,
+    "selling_price": 108.00,
+    "equipment": "66f7a65eceeb06bb773cc69c"
+}
+
+{
+    "name": "Official Size Basketball",
+    "description": "High-quality official size basketball designed for indoor and outdoor play. Made from durable rubber with excellent grip and control.",
+    "product_images": [
+        "https://example.com/images/official_basketball.jpg"
+    ],
+    "qty": 50,
+    "discountPer": 5,
+    "price": 29.99,
+    "selling_price": 28.49,
+    "equipment": "66f7a68fceeb06bb773cc6a0"
+}
+
+{
+    "name": "Adjustable Basketball Hoop",
+    "description": "An adjustable basketball hoop that can be set from 7.5 to 10 feet. Made with a sturdy base and weather-resistant materials, perfect for both indoor and outdoor use.",
+    "product_images": [
+        "https://example.com/images/adjustable_basketball_hoop.jpg"
+    ],
+    "qty": 20,
+    "discountPer": 10,
+    "price": 199.99,
+    "selling_price": 179.99,
+    "equipment": "66f7a69fceeb06bb773cc6a4"
+}
+
+{
+    "name": "Kookaburra Ghost Pro 1500 Cricket Bat",
+    "description": "The Kookaburra Ghost Pro 1500 is designed for serious cricketers looking for a high-performance bat. Made from Grade 1 English willow, it offers a large sweet spot and excellent pick-up. Ideal for both front foot and back foot play.",
+    "product_images": [
+        "https://example.com/images/kookaburra_ghost_pro_bat.jpg",
+        "https://example.com/images/kookaburra_ghost_pro_bat_side.jpg"
+    ],
+    "qty": 20,
+    "discountPer": 10,
+    "price": 299.99,
+    "selling_price": 269.99,
+    "equipment": "66f7a74cceeb06bb773cc6a8"
+}
+
+{
+    "name": "SG Test Leather Cricket Ball",
+    "description": "The SG Test Leather Cricket Ball is crafted for professional players, featuring a durable leather exterior with a high-quality cork core for excellent bounce and swing. Perfect for both test and club matches.",
+    "product_images": [
+        "https://example.com/images/sg_test_cricket_ball.jpg",
+        "https://example.com/images/sg_test_cricket_ball_closeup.jpg"
+    ],
+    "qty": 50,
+    "discountPer": 5,
+    "price": 29.99,
+    "selling_price": 28.49,
+    "equipment": "66f7a76fceeb06bb773cc6ac"
+}
+
+{
+    "name": "SG Cricket Helmet",
+    "description": "The SG Cricket Helmet is designed for maximum protection and comfort. It features a robust shell, cushioned interior, and a strong grille for face protection. Ideal for both professional and amateur players.",
+    "product_images": [
+        "https://example.com/images/sg_cricket_helmet.jpg",
+        "https://example.com/images/sg_cricket_helmet_side.jpg"
+    ],
+    "qty": 25,
+    "discountPer": 10,
+    "price": 4999,
+    "selling_price": 4499,
+    "equipment": "66f7a77fceeb06bb773cc6b0"
+}
+
+{
+    "wishlist": [
+        {
+            "product": "66f7aba0ceeb06bb773cc6c8"  
+        }
+    ]
+}
+
+
+====================================================================================
+{
+    "product": "66f7ac33ceeb06bb773cc6d4",  // Replace with actual Product ID
+    "rating": 5,
+    "comment": "This product exceeded my expectations. Highly recommend!"
+}
+
+====================================================================================
+
+{
+    "productId": "66f7ac4cceeb06bb773cc6d8", 
+    "quantity": 3
+}
+
+
+====================================================================================
+{
+    "shippingAddress": "66f7a035ceeb06bb773cc646"  // Replace with actual Address ID
+}
+
+====================================================================================
+
+{
+    "order": "66f7c01cc1753e1d476b57ba",  // Replace with actual Order ID
+    "paymentMethod": "Credit Card"  // Can be 'Credit Card', 'Debit Card', 'Net Banking', 'UPI', or 'Wallet'
+}

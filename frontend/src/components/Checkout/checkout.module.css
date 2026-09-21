@@ -1,0 +1,115 @@
+/* Checkout.module.css */
+
+/* General container padding and spacing */
+.checkoutContainer {
+    padding: 20px;
+    background-color: var(--main-card-bg-color);
+    border-radius: 10px;
+    box-shadow: var(--main-box-shadow);
+  }
+  
+  /* Styling the checkout heading */
+  .checkoutTitle {
+    display: inline-block;
+    color: var(--main-color);
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Form Inputs */
+  .formInput {
+    border: 2px solid #ced4da;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
+  }
+  
+  /* Highlight the input fields on focus */
+  .formInput:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Button Styles */
+  .checkoutButton {
+    background-color: #0504AA; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+    margin: 10px 0;
+  }
+  
+  .checkoutButton:hover {
+    background-color: wheat;
+    color: black;
+    transition: .5s !important;
+  }
+  
+  
+  /* Styling for product list in the order summary */
+
+  .ProductViewScroll{
+    height: 300px;
+    overflow-y: scroll;
+    background-color: var(--main-card-bg-color);
+  }
+
+
+  .productItem {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    border-left: 5px solid var(--main-color);
+  }
+  
+  .productItem h6 {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  
+  .totalPrice {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--main-color);
+  }
+  
+  /* Promo code styling */
+
+  .promoCode {
+    border: 2px solid #0504AA;
+    border-radius: 5px;
+    padding: 10px;
+  }
+  
+  .promoCodeButton {
+    background-color: #0504AA;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .promoCodeButton:hover {
+    background-color: #0504AA;
+    color: white;
+  }
+  
+  /* Media Queries */
+  @media (max-width: 768px) {
+    .checkoutTitle {
+      font-size: 1.5rem;
+    }
+  
+    .checkoutButton {
+      font-size: 1rem;
+    }
+  
+    .formInput {
+      font-size: 0.9rem;
+    }
+  }
+  

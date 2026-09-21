@@ -1,0 +1,144 @@
+@import url("https://fonts.googleapis.com/css2?family=Faster+One&display=swap");
+
+.Container {
+  width: 100%;
+  text-align: center;
+  margin-top: 21px;
+}
+.allCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.allCard {
+  width: 350px;
+  position: relative;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.allImg {
+  opacity: 72%;
+  width: 350px;
+  height: 350px;
+}
+
+.allText {
+  width: 350px;
+  height: 350px;
+  background-color: var(--main-background-color);
+  border: none;
+  z-index: -1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 65px;
+  color: #1f7dea;
+  font-family: "Faster One", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.KidsCard {
+  border-bottom-right-radius: 50px;
+  box-shadow: 10px 14px 51px 0 #1f7dea;
+}
+
+.kidsImg {
+  border-bottom-right-radius: 50px;
+}
+
+.CardBody {
+  position: absolute;
+  color: black;
+  font-size: 90px;
+  line-height: normal;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.AllSportsCard {
+  border-bottom-left-radius: 50px;
+  box-shadow: -10px 14px 51px 0 #1f7dea;
+}
+
+.allsportImg {
+  border-bottom-left-radius: 50px;
+}
+
+.AdultsCard {
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  box-shadow: 0px -18px 51px 0 #1f7dea;
+}
+
+.AdultsImg {
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+}
+
+@media screen and (max-width: 426px) {
+  .Container {
+  }
+
+  .allCol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .allCard {
+    width: 100%;
+    width: 80px;
+    height: 80px;
+  }
+
+  .allImg {
+    width: 80px;
+    height: 80px;
+  }
+
+  .CardBody {
+    font-size: 12px;
+  }
+
+  .allText {
+    width: 80px;
+    height: 80px;
+    font-size: 12px;
+  }
+
+  .KidsCard {
+    border-bottom-right-radius: 10px;
+    box-shadow: 10px 7px 17px 0 #1f7dea;
+  }
+
+  .kidsImg {
+    border-bottom-right-radius: 10px;
+  }
+
+  .AllSportsCard {
+    border-bottom-left-radius: 10px;
+    box-shadow: -10px 7px 17px 0 #1f7dea;
+
+  }
+
+  .allsportImg {
+    border-bottom-left-radius: 10px;
+  }
+
+  .AdultsCard {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-shadow: 0px -10px 17px 0 #1f7dea;
+
+  }
+
+  .AdultsImg {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+}

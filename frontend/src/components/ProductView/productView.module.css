@@ -1,0 +1,79 @@
+.ImgCard{
+    width: 500px;
+    height: 400px;
+    background-color: var(--main-card-bg-color);
+    border-radius: 10px;
+}
+
+.ImgCard img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+
+.Table{
+    border-spacing: 10px;
+}
+
+.Quent{
+    color: var(--main-color);
+}
+
+
+/* .AddBtn{
+    background-color: #0504AA; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 200px;
+    height: 50px;
+}
+
+.AddBtn:hover{
+    background-color: wheat;
+    color: #0504AA;
+    transition: .5s !important;
+
+}
+
+
+.BuyBtn{
+    background-color: wheat;
+    color: #0504AA;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 200px;
+    height: 50px;
+}
+
+.BuyBtn:hover{
+    background-color: #0504AA; 
+    color: white;
+    transition: .5s !important;
+} */
+
+.ULTab li button{
+    background-color: #0504AA !important;
+    color: white !important;
+
+}
+
+.ULTab li button:hover{
+    background-color: wheat !important;
+    color: #0504AA !important;
+    transition: .5s !important;
+}
+
+.ULTab li button:focus{
+    background-color: wheat !important;
+    color: #0504AA !important;
+    transition: .5s !important;
+}
+

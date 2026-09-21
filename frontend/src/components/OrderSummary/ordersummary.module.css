@@ -1,0 +1,9 @@
+.MainCard{
+    background-color: var(--main-card-bg-color);
+    box-shadow: var(--main-box-shadow);
+}
+
+
+.rightImage{
+    width: 80px;
+}

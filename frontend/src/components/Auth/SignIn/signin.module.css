@@ -1,0 +1,43 @@
+.Container{
+    box-shadow: inset;
+}
+
+.Card{
+    width: 640px;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 0px 40px 0 #b0b0b0;
+}
+
+.Input{
+    position: relative;
+}
+
+.FormControl{
+    border: none;
+    background-color: #DCF7FF;
+    height: 60px;
+    padding-left: 80px;
+    border-radius: 50px;
+    font-size: 20px;
+}
+
+.Icons{
+    position: absolute;
+    top: -10px;
+    left: 0px;
+}
+
+
+
+.Input i{
+    color: #3391FF;
+    font-size: 3.6rem;
+}
+
+.Buttons button{
+    background-color: #000080;
+    color: var(--main-text-color);
+
+}
+
