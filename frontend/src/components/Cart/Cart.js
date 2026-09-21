@@ -1,14 +1,13 @@
 import React, { useEffect } from "react";
-import styles from "./cart.module.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import CartItem from "./CartItem";
 import CheckoutSummary from "./CheckoutSummary";
-import useBackNavigation from "../../hooks/useBackNavigation";
 import { useCart } from "../../Context/CartContext";
+import { ArrowLeft, ShoppingBag } from "lucide-react";
+import Button from "../Button/Button";
 
 function Cart() {
   const navigate = useNavigate();
-  const { goBack } = useBackNavigation();
   const {
     cartData,
     isLoading,
@@ -18,80 +17,99 @@ function Cart() {
     totalDiscount,
     handleRemove,
     handleQuantityChange,
-    fetchCart, // Ensure fetchCart is available
+    fetchCart,
   } = useCart();
 
   useEffect(() => {
-    fetchCart(); // Fetch cart data when component mounts
+    fetchCart();
   }, []);
 
   const handleCheckout = () => {
-    // if (cartData.length > 0 && !isLoading) {
-    //   navigate("/checkout");
-    // } else {
-    //   alert("Cart is empty");
-    // }
-    navigate("/checkout");
+    if (cartData.length > 0) {
+      navigate("/checkout");
+    }
   };
 
   if (isLoading) {
-    return <div>Loading cart data...</div>; // Show loading indicator
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+      </div>
+    );
   }
 
+  const hasItems = Array.isArray(cartData) && cartData.length > 0;
+
   return (
-    <div className={`container ${styles.MainContainer}`}>
-      <div className="row m-1 rounded-2 bg-white">
-        <div className="col-8">
-          <div className="container m-2">
-            <div className="d-flex gap-2 align-items-center">
-              <i
-                className="bi bi-arrow-left fs-5 text-dark"
-                onClick={goBack}
-              ></i>
-              <div className="fs-5 fw-semibold">Continue Shopping</div>
-            </div>
-            <hr className="mt-2" />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Back Link */}
+      <div className="mb-6">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Continue Shopping</span>
+        </Link>
+      </div>
 
-            <div className="row text-center fw-bold">
-              <div className="col-3">Image</div>
-              <div className="col-3">Name</div>
-              <div className="col-2">Quantity</div>
-              <div className="col-2">Price</div>
-              <div className="col-2">Remove</div>
-            </div>
-            <hr
-              className="mt-2"
-              style={{ border: "2px dotted black", width: "100%" }}
+      <div className="mb-8">
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          Your Shopping Cart
+        </h1>
+        <p className="text-sm text-slate-500 mt-1">
+          {hasItems
+            ? `Review your ${cartData.length} selected item(s) before checkout`
+            : "Your cart is currently empty"}
+        </p>
+      </div>
+
+      {hasItems ? (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Cart Items List */}
+          <div className="lg:col-span-8 bg-white rounded-3xl border border-slate-100 p-6 shadow-sm divide-y divide-slate-100">
+            {cartData.map((item, index) => (
+              <CartItem
+                key={item.product?._id || index}
+                item={item}
+                onQuantityChange={handleQuantityChange}
+                onRemove={handleRemove}
+              />
+            ))}
+          </div>
+
+          {/* Checkout Summary Card */}
+          <div className="lg:col-span-4 sticky top-24">
+            <CheckoutSummary
+              sellingPrice={sellingPrice}
+              totalSellingPrice={totalSellingPrice}
+              totalPrice={totalPrice}
+              totalDiscount={totalDiscount}
+              handleCheckout={handleCheckout}
             />
-
-            <div className={`${styles.CartScrollContainer} p-3 rounded-2`}>
-              {Array.isArray(cartData) && cartData.length > 0 ? (
-                cartData.map((item, index) => (
-                  <CartItem
-                    key={index}
-                    item={item}
-                    onQuantityChange={handleQuantityChange}
-                    onRemove={handleRemove}
-                  />
-                ))
-              ) : (
-                <div>No items in the cart</div> // Show when cart is empty
-              )}
-            </div>
           </div>
         </div>
-
-        <div className="col-4">
-          {/* Show checkout summary */}
-          <CheckoutSummary
-            sellingPrice={sellingPrice}
-            totalSellingPrice={totalSellingPrice}
-            totalPrice={totalPrice}
-            totalDiscount={totalDiscount}
-            handleCheckout={handleCheckout}
-          />
+      ) : (
+        /* Empty Cart State */
+        <div className="bg-white rounded-3xl border border-slate-100 p-12 text-center max-w-lg mx-auto shadow-sm space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+            <ShoppingBag className="w-8 h-8" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-900">Your cart is empty</h2>
+          <p className="text-sm text-slate-500">
+            Looks like you haven't added any sports gear or equipment to your cart yet.
+          </p>
+          <div className="pt-2">
+            <Button
+              type="button"
+              variant="primary"
+              size="md"
+              onClick={() => navigate("/category")}
+              label="Explore Sports Catalog"
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

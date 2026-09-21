@@ -12,11 +12,14 @@ exports.createOrder = async (req, res) => {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
-    const orderItems = cart.items.map((item) => ({
-      product: item.product._id,
-      quantity: item.quantity,
-      price: item.product.selling_price,
-    }));
+    const orderItems = cart.items.map((item) => {
+      const unitPrice = Number(item.product.selling_price?.toString() || item.product.selling_price || 0);
+      return {
+        product: item.product._id,
+        quantity: item.quantity,
+        price: unitPrice,
+      };
+    });
 
     const totalPrice = orderItems.reduce(
       (total, item) => total + item.price * item.quantity,

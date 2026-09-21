@@ -1,9 +1,0 @@
-.MainCard{
-    background-color: var(--main-card-bg-color);
-    box-shadow: var(--main-box-shadow);
-}
-
-.OrderHistoryContainer{
-    height: 400px;
-    overflow-y: scroll;
-}

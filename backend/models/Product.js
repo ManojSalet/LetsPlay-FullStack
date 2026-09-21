@@ -21,12 +21,12 @@ const productSchema = new mongoose.Schema({
 		default: 0
 	},
 	price: {
-		type: mongoose.Schema.Types.Decimal128,
-		require: true
+		type: Number,
+		required: true
 	},
 	selling_price: {
-		type: mongoose.Schema.Types.Decimal128,
-		require: true
+		type: Number,
+		required: true
 	},
 	equipment: {
 		type: mongoose.Schema.Types.ObjectId,

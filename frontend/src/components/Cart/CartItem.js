@@ -1,101 +1,94 @@
 import React, { useState } from "react";
-import styles from "./cart.module.css";
-import { updateCartQuantity, removeFromCart } from "../../API/apiService";
+import { Plus, Minus, Trash2 } from "lucide-react";
 
 const CartItem = ({ item, onQuantityChange, onRemove }) => {
   const [quantity, setQuantity] = useState(item.quantity);
 
-  const handleQuantityChange = async (newQuantity) => {
-    if (newQuantity < 1) return; // Prevent quantity from going below 1
-
-    setQuantity(newQuantity); // Optimistic UI update
-
-    try {
-      // Call API to update quantity in backend
-      const updatedCart = await updateCartQuantity(
-        item.product._id,
-        newQuantity
-      );
-      if (updatedCart && updatedCart.items) {
-        onQuantityChange(updatedCart); // Update the cart in the parent component
-      }
-    } catch (error) {
-      console.error("Error updating quantity", error);
+  const handleMinus = () => {
+    if (quantity > 1) {
+      const newQty = quantity - 1;
+      setQuantity(newQty);
+      onQuantityChange(item.product?._id, newQty);
     }
   };
 
-
-  const handleRemove = async () => {
-    try {
-      await removeFromCart(item.product._id);
-      onRemove(item.product._id); // Remove the item from the cart in the parent component
-    } catch (error) {
-      console.log("Error removing item from cart", error);
-    }
+  const handlePlus = () => {
+    const newQty = quantity + 1;
+    setQuantity(newQty);
+    onQuantityChange(item.product?._id, newQty);
   };
 
-  // cart item price with quantity
-  const itemPrice = Number(item.product.selling_price.$numberDecimal) * quantity;
+  const handleRemove = () => {
+    onRemove(item.product?._id);
+  };
+
+  const unitPrice = parseFloat(
+    item.product?.selling_price?.$numberDecimal ||
+      item.product?.selling_price ||
+      item.product?.price?.$numberDecimal ||
+      item.product?.price ||
+      0
+  );
+  const totalPrice = unitPrice * quantity;
 
   return (
-    <div className="row p-2">
-      <div
-        className={`card border d-flex flex-row align-items-center justify-content-between ${styles.ListCart}`}
-      >
-        {/* Product Image */}
-        <div className="col-3 d-flex justify-content-center align-items-center">
-          <div className={`card border-0 ${styles.CartImg}`}>
-            <img
-              src={item.product.product_images[0]}
-              className="img-fluid"
-              alt={`${item.product.name}`}
-            />
-          </div>
+    <div className="py-4 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* Image & Title */}
+      <div className="flex items-center gap-4 w-full sm:w-1/2">
+        <div className="w-20 h-20 bg-slate-50 border border-slate-100 rounded-xl p-2 flex items-center justify-center flex-shrink-0">
+          <img
+            src={item.product?.product_images?.[0] || ""}
+            alt={item.product?.name || "Product"}
+            className="max-h-full max-w-full object-contain"
+          />
         </div>
-
-        {/* Product Title */}
-        <div className="col-3 d-flex align-items-center justify-content-center">
-          <h6 className="fw-bold text-center">{item.product.name}</h6>
+        <div className="min-w-0">
+          <h4 className="text-sm font-bold text-slate-800 line-clamp-1">
+            {item.product?.name || "Product Name"}
+          </h4>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Unit: ₹{unitPrice.toLocaleString("en-IN")}
+          </p>
         </div>
+      </div>
 
-        {/* Product Quantity */}
-        <div className="col-2 d-flex flex-column align-items-center">
-          <div
-            className={`w-75 border border-1 border-dark rounded-pill d-flex justify-content-between align-items-center ${styles.Quent}`}
+      {/* Quantity Stepper */}
+      <div className="flex items-center gap-6 justify-between w-full sm:w-auto">
+        <div className="inline-flex items-center border border-slate-200 rounded-lg bg-white shadow-sm">
+          <button
+            type="button"
+            onClick={handleMinus}
+            disabled={quantity <= 1}
+            className="p-1.5 text-slate-500 hover:text-slate-800 disabled:opacity-40 transition-colors cursor-pointer"
           >
-            <button
-              type="button"
-              className="border-0 bg-transparent"
-              onClick={() => handleQuantityChange(quantity - 1)}
-            >
-              <i className="bi bi-dash fs-5"></i>
-            </button>
-
-            <span className="fs-5 fw-medium">{quantity}</span>
-
-            <button
-              type="button"
-              className="border-0 bg-transparent"
-              onClick={() => handleQuantityChange(quantity + 1)}
-            >
-              <i className="bi bi-plus fs-5"></i>
-            </button>
-          </div>
+            <Minus className="w-3.5 h-3.5" />
+          </button>
+          <span className="px-3 text-xs font-bold text-slate-900">{quantity}</span>
+          <button
+            type="button"
+            onClick={handlePlus}
+            className="p-1.5 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {/* Product Price */}
-        <div className="col-2 d-flex align-items-center justify-content-center">
-          <span className="fs-5 fw-bold">
-            ₹ {itemPrice.toFixed(2)}
+        {/* Item Total Price */}
+        <div className="w-24 text-right">
+          <span className="text-sm font-black text-slate-900">
+            ₹{totalPrice.toLocaleString("en-IN")}
           </span>
         </div>
 
-        {/* Remove Button */}
-        <div className="col-2 d-flex align-items-center justify-content-center">
-          <button className="border-0 bg-transparent" onClick={handleRemove}>
-            <i className="bi bi-trash-fill text-danger fs-4"></i>
-          </button>
-        </div>
+        {/* Delete Button */}
+        <button
+          type="button"
+          onClick={handleRemove}
+          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+          title="Remove from cart"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );

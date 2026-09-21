@@ -1,44 +1,48 @@
 import React, { useState } from "react";
-import styles from "./searchbar.module.css";
-
+import { Search, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Searchbar = () => {
-  const [inputStyle, setInputStyle] = useState();
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
-  const handlarFocus = () =>{
-    setInputStyle({
-      borderLeft: '1px solid black',
-  })
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      // In future phase, can navigate to dedicated search page or pass search params
+      console.log("Searching for:", searchTerm);
+    }
   };
 
-    
   return (
-    <div className={`container searchbar d-flex justify-content-center`}>
-      <div className={`card my-2 ${styles.Card} `}>
-        <div className={`card-body ${styles.CardBody} row`}>
-          <div className={`col-4`}>
-            <button className={`btn ${styles.searchBtn}`}>Search</button>
-          </div>
-          <div className={`col-6`}>
-            <input
-              type="text"
-              className={`form-control ${styles.searchInput}`}
-              placeholder="Search for products, brands and more"
-              style={inputStyle}
-              onFocus={handlarFocus}
-              onBlur={(e)=>{
-                e.target.value = '';
-                setInputStyle({
-                  borderLeft: 'none',
-                })
-              }}
-            />
-          </div>
-          <div className={`col-2 d-flex justify-content-center`}>
-            <i className={`bi bi-search ${styles.searchIcon}`}></i>
-          </div>
+    <div className="max-w-3xl mx-auto px-4 my-4">
+      <form onSubmit={handleSearch} className="relative flex items-center">
+        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+          <Search className="w-5 h-5" />
         </div>
-      </div>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search for sports equipment, rackets, bats, balls, and more..."
+          className="w-full pl-11 pr-24 py-3 bg-white border border-slate-200 rounded-full text-sm text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+        />
+        {searchTerm && (
+          <button
+            type="button"
+            onClick={() => setSearchTerm("")}
+            className="absolute right-20 text-slate-400 hover:text-slate-600 p-1"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+        <button
+          type="submit"
+          className="absolute right-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-full shadow transition-colors cursor-pointer"
+        >
+          Search
+        </button>
+      </form>
     </div>
   );
 };

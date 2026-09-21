@@ -103,7 +103,7 @@ exports.updateProduct = async (req, res) => {
     product.price = price || product.price;
 
     // Recalculate discount and selling price if price or discountPer changed
-    discount = (product.price * product.discountPer) / 100;
+    const discount = (product.price * product.discountPer) / 100;
     product.selling_price = product.price - discount;
 
     await product.save();

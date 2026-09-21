@@ -115,7 +115,7 @@ exports.login = async (req, res) => {
 			token
 		});
 	} catch (error) {
-		console.error(err.message);
+		console.error(error.message);
 		res.status(500).send('Server error');
 	}
 }

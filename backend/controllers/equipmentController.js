@@ -37,7 +37,7 @@ exports.updateEquipment = async (req, res) => {
 		const { equipmentId } = req.params;
 		const { name, description, sportId } = req.body;
 
-		let equipment = await Sport.findById(equipmentId);
+		let equipment = await Equipment.findById(equipmentId);
 		if (!equipment) {
 			return res.status(404).json({ message: 'Equipment not found' });
 		}
@@ -48,8 +48,10 @@ exports.updateEquipment = async (req, res) => {
 		if (sportId && sportId !== equipment.sport.toString()) {
 			// Remove the equipment from the old sport's equipment array
 			const oldSport = await Sport.findById(equipment.sport);
-			oldSport.equipment.pull(equipment._id);
-			await oldSport.save();
+			if (oldSport) {
+				oldSport.equipment.pull(equipment._id);
+				await oldSport.save();
+			}
 
 			// Assign the new sport and add the equipment to the new sport's equipment array
 			const newSport = await Sport.findById(sportId);
@@ -82,11 +84,13 @@ exports.deleteEquipment = async (req, res) => {
 
 		// Remove the equipment from the sport's equipment array
 		const sport = await Sport.findById(equipment.sport);
-		sport.equipment.pull(equipment._id);
-		await sport.save();
+		if (sport) {
+			sport.equipment.pull(equipment._id);
+			await sport.save();
+		}
 
-		// Delete associated equipment
-		for (let productId of Equipment.product) {
+		// Delete associated products
+		for (let productId of (equipment.products || [])) {
 			await Product.findByIdAndDelete(productId);
 		}
 

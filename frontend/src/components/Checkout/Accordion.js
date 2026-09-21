@@ -1,31 +1,47 @@
 import React, { useEffect, useState } from "react";
-import styles from "./checkout.module.css";
 import { useCart } from "../../Context/CartContext";
 import { getAddress, saveAddress } from "../../API/apiService";
 import Button from "../Button/Button";
+import {
+  MapPin,
+  Plus,
+  CreditCard,
+  Landmark,
+  Banknote,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 
 function Accordion({ adressId, paymentMethod }) {
   const { allCartData } = useCart();
   const userId = allCartData?.cart?.user;
   const [address, setAddress] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [selectedMethod, setSelectedMethod] = useState("");
+  const [openSection, setOpenSection] = useState("address"); // 'address' | 'new-address' | 'payment'
+  const [selectedCountry, setSelectedCountry] = useState("in");
+  const [states, setStates] = useState([]);
 
-  const [selectedCountry, setSelectedCountry] = useState(""); // For country selection
-  const [states, setStates] = useState([]); // To store and update states based on country
-
-
-  // Country and state data
   const countryData = {
     us: ["California", "Texas", "New York", "Florida"],
     ca: ["Ontario", "Quebec", "British Columbia"],
-    in: ["Maharashtra", "Delhi", "Karnataka", "Tamil Nadu", "Ahmedabad", "Porbandar", "Rajkot"],
+    in: [
+      "Gujarat",
+      "Maharashtra",
+      "Delhi",
+      "Karnataka",
+      "Tamil Nadu",
+      "Rajasthan",
+      "Punjab",
+    ],
   };
 
   const fetchAddress = async () => {
     try {
       const response = await getAddress(userId);
-      // console.log("demo", response?.addresses);
       if (response?.addresses) {
-        setAddress(response?.addresses);
+        setAddress(response.addresses);
       } else {
         setAddress([]);
       }
@@ -36,388 +52,393 @@ function Accordion({ adressId, paymentMethod }) {
 
   useEffect(() => {
     if (userId) {
-      // Only fetch address if userId exists
       fetchAddress();
     }
   }, [userId]);
 
   useEffect(() => {
-    // Update states based on the selected country
     if (selectedCountry) {
       setStates(countryData[selectedCountry] || []);
     } else {
       setStates([]);
     }
-  }, [selectedCountry]); // Runs whenever `selectedCountry` changes
+  }, [selectedCountry]);
 
-  if (!userId) {
-    // Handle the case when userId is not available
-    return <div>Loading...</div>; // Or any appropriate UI until the data is available
-  }
-
-  const getAddressId = (id) => {
-    console.log("Selected Address ID: ", id);
+  const handleSelectAddress = (id) => {
+    setSelectedAddressId(id);
     adressId(id);
   };
 
-  const getPaymentMethod = (method) => {
-    console.log("Selected Payment Method: ", method);
+  const handleSelectPayment = (method) => {
+    setSelectedMethod(method);
     paymentMethod(method);
   };
 
   const handleAddressSave = async (e) => {
     e.preventDefault();
-
-    const firstName = e.target.firstName.value;
-    const lastName = e.target.lastName.value;
+    const form = e.target;
 
     const addressDetails = {
       details: {
-        name: firstName + " " + lastName,
-        houseNo: e.target.houseNo.value,
-        street: e.target.street.value,
-        landmark: e.target.landmark.value,
-        district: e.target.district.value,
-        contact: e.target.contact.value,
-        country: e.target.country.value,
-        state: e.target.state.value,
-        pin: e.target.zip.value,
+        name: `${form.firstName.value} ${form.lastName.value}`,
+        houseNo: form.houseNo.value,
+        street: form.street.value,
+        landmark: form.landmark.value,
+        district: form.district.value,
+        contact: form.contact.value,
+        country: form.country.value,
+        state: form.state.value,
+        pin: form.zip.value,
       },
     };
 
     try {
       const response = await saveAddress(addressDetails);
-      console.log("Address Saved: ", response);
       if (response) {
-        fetchAddress();
-        alert("Address saved successfully \nselect from the list");
-        e.target.reset();
+        await fetchAddress();
+        form.reset();
+        setOpenSection("address");
       }
     } catch (error) {
       console.error("Failed to save address", error);
+      alert("Failed to save address. Please try again.");
     }
-    console.log("Address Details: ", addressDetails);
+  };
+
+  const toggleSection = (section) => {
+    setOpenSection(openSection === section ? "" : section);
   };
 
   return (
-    <>
-      <div className="accordion" id="accordionExample">
-        <div className="accordion-item">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseOne"
-              aria-expanded="true"
-              aria-controls="collapseOne"
-            >
-              <h4 className="">Default Shipping Address</h4>
-            </button>
-          </h2>
-          <div
-            id="collapseOne"
-            className="accordion-collapse collapse show"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body">
-              <div className="row">
-                {address.length > 0 ? (
-                  address.map((adr) =>
-                    adr.details.map((d) => (
-                      <>
-                        <div className="m-3 d-flex gap-2" key={d._id}>
-                          {" "}
-                          {/* Unique key for each address */}
-                          <input
-                            type="radio"
-                            name="adr-1"
-                            id={`adr-${d._id}`}
-                            className="m-2"
-                            // onClick={() => getAddressId(d._id)}
-                            onChange={() => getAddressId(d._id)}
-                          />
-                          <label
-                            htmlFor={`adr-${d._id}`}
-                            className="w-75"
-                            onClick={() => getAddressId(d._id)}
-                          >
-                            {`${d.name}, ${d.houseNo}, ${d.street}, ${d.landmark}, ${d.district}, ${d.state}, ${d.country} - ${d.pin}`}
-                            <br />
-                            Contact: {d.contact}
-                          </label>
-                        </div>
-                        <hr className="w-75 ms-3" />
-                      </>
-                    ))
-                  )
-                ) : (
-                  <div className="m-3">
-                    No address found. Please add a shipping address.
-                  </div>
-                )}
-              </div>
+    <div className="space-y-4">
+      {/* 1. Saved Addresses Section */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden transition-all">
+        <button
+          type="button"
+          onClick={() => toggleSection("address")}
+          className="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
+              1
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900">
+                Shipping Address
+              </h3>
+              <p className="text-xs text-slate-500">
+                {selectedAddressId ? "Address selected" : "Choose delivery address"}
+              </p>
             </div>
           </div>
-        </div>
-        <div className="accordion-item">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseTwo"
-              aria-expanded="false"
-              aria-controls="collapseTwo"
-            >
-              <h4 className="">Enter Shipping Address</h4>
-            </button>
-          </h2>
-          <div
-            id="collapseTwo"
-            className="accordion-collapse collapse"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body">
-              <h4 className="mb-3">Shipping Information</h4>
-              <form onSubmit={handleAddressSave}>
-                <div className="row g-3">
-                  <div className="col-md-6">
-                    <label htmlFor="firstName" className="form-label">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      className={`form-control ${styles.formInput}`}
-                      id="firstName"
-                      name="firstName"
-                      placeholder="John"
-                      required
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="lastName" className="form-label">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      className={`form-control ${styles.formInput}`}
-                      id="lastName"
-                      placeholder="Doe"
-                      required
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="contact" className="form-label">
-                      Contact Number
-                    </label>
-                    <input
-                      type="tel"
-                      className={`form-control ${styles.formInput}`}
-                      id="contact"
-                      placeholder="12345 67890"
-                      required
-                    />
-                  </div>
-                  <div></div>
-                  <div className="col-md-6">
-                    <label htmlFor="houseNo" className="form-label">
-                      House No
-                    </label>
-                    <input
-                      type="text"
-                      className={`form-control ${styles.formInput}`}
-                      id="houseNo"
-                      placeholder="1234"
-                      required
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="street" className="form-label">
-                      Street
-                    </label>
-                    <input
-                      type="text"
-                      className={`form-control ${styles.formInput}`}
-                      id="street"
-                      placeholder="Main st"
-                      required
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="landmark" className="form-label">
-                      Landmark
-                    </label>
-                    <input
-                      type="text"
-                      className={`form-control ${styles.formInput}`}
-                      id="landmark"
-                      placeholder="new park"
-                      required
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="district" className="form-label">
-                      Disctrict
-                    </label>
-                    <input
-                      type="text"
-                      className={`form-control ${styles.formInput}`}
-                      id="district"
-                      placeholder="Ahmedabad"
-                      required
-                    />
-                  </div>
+          {openSection === "address" ? (
+            <ChevronUp className="w-5 h-5 text-slate-400" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-slate-400" />
+          )}
+        </button>
 
-                  {/* Country Dropdown */}
-                  <div className="col-md-6">
-                    <label htmlFor="country" className="form-label">
-                      Country
-                    </label>
-                    <select
-                      className={`form-select ${styles.formInput}`}
-                      id="country"
-                      name="country"
-                      value={selectedCountry}
-                      onChange={(e) => setSelectedCountry(e.target.value)}
-                      required
-                    >
-                      <option value="">-- Choose a country --</option>
-                      <option value="us">United States</option>
-                      <option value="ca">Canada</option>
-                      <option value="in">India</option>
-                    </select>
-                  </div>
-
-                  {/* State Dropdown */}
-                  <div className="col-md-6">
-                    <label htmlFor="state" className="form-label">
-                      State
-                    </label>
-                    <select
-                      className={`form-select ${styles.formInput}`}
-                      id="state"
-                      name="state"
-                      required
-                    >
-                      <option value="">-- Choose a state --</option>
-                      {states.map((state, index) => (
-                        <option key={index} value={state}>
-                          {state}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="zip" className="form-label">
-                      Pincode
-                    </label>
+        {openSection === "address" && (
+          <div className="p-5 pt-0 border-t border-slate-100 space-y-4">
+            <div className="grid grid-cols-1 gap-3 pt-4">
+              {address.length > 0 ? (
+                address.flatMap((adr) => adr.details || []).map((d) => (
+                  <label
+                    key={d._id}
+                    className={`p-4 rounded-xl border-2 flex items-start gap-3 cursor-pointer transition-all ${
+                      selectedAddressId === d._id
+                        ? "border-indigo-600 bg-indigo-50/50 shadow-sm"
+                        : "border-slate-200 hover:border-slate-300 bg-white"
+                    }`}
+                  >
                     <input
-                      type="text"
-                      className={`form-control ${styles.formInput}`}
-                      id="zip"
-                      required
+                      type="radio"
+                      name="addressSelection"
+                      checked={selectedAddressId === d._id}
+                      onChange={() => handleSelectAddress(d._id)}
+                      className="mt-1 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                     />
-                  </div>
+                    <div className="text-xs text-slate-700 leading-relaxed">
+                      <span className="font-bold text-slate-900 text-sm block">
+                        {d.name}
+                      </span>
+                      <span>
+                        {d.houseNo}, {d.street}, {d.landmark}, {d.district},{" "}
+                        {d.state}, {d.country} — <strong>{d.pin}</strong>
+                      </span>
+                      <span className="block mt-1 text-slate-500 font-medium">
+                        Phone: {d.contact}
+                      </span>
+                    </div>
+                  </label>
+                ))
+              ) : (
+                <div className="text-center py-6 text-slate-400 text-sm">
+                  No saved addresses found. Please add a new address below.
                 </div>
-                <Button type={'submit'} label={'Save Address'} className={'mt-3'} />
-              </form>
+              )}
             </div>
-          </div>
-        </div>
-        <div className="accordion-item">
-          <h2 className="accordion-header">
+
             <button
-              className="accordion-button collapsed"
               type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseThree"
-              aria-expanded="false"
-              aria-controls="collapseThree"
+              onClick={() => setOpenSection("new-address")}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-700 cursor-pointer pt-2"
             >
-              <h4 className="">Payment Information</h4>
+              <Plus className="w-4 h-4" />
+              <span>+ Add a new delivery address</span>
             </button>
-          </h2>
-          <div
-            id="collapseThree"
-            className="accordion-collapse collapse"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body">
-              <h4 className="mb-3">Select Payment Method</h4>
-              <hr />
-              <div className="row mt-2">
-                <div className="col-3 d-flex align-items-center gap-2">
-                  <input
-                    type="radio"
-                    name="payment"
-                    id="creditCard"
-                    value="Credit Card"
-                    onChange={(e) => getPaymentMethod(e.target.value)}
-                  />
-                  <label
-                    htmlFor="creditCard"
-                    className="d-flex align-items-center gap-2"
-                  >
-                    <i class="bi bi-credit-card-fill fs-1"></i>
-                    <h6>Credit Card</h6>
-                  </label>
-                </div>
-
-                <div className="col-3 d-flex align-items-center gap-2">
-                  <input
-                    type="radio"
-                    name="payment"
-                    id="debitCard"
-                    value="Debit Card"
-                    onChange={(e) => getPaymentMethod(e.target.value)}
-                  />
-                  <label
-                    htmlFor="debitCard"
-                    className="d-flex align-items-center gap-2"
-                  >
-                    <i class="bi bi-credit-card-2-back-fill fs-1"></i>
-                    <h6>Debit Card</h6>
-                  </label>
-                </div>
-
-                <div className="col-3 d-flex align-items-center gap-2">
-                  <input
-                    type="radio"
-                    name="payment"
-                    id="netBanking"
-                    value="Net Banking"
-                    onChange={(e) => getPaymentMethod(e.target.value)}
-                  />
-                  <label
-                    htmlFor="netBanking"
-                    className="d-flex align-items-center gap-2"
-                  >
-                    <i class="bi bi-bank2 fs-1"></i> <h6>Net Banking</h6>
-                  </label>
-                </div>
-
-                <div className="col-3 d-flex align-items-center gap-2">
-                  <input
-                    type="radio"
-                    name="payment"
-                    id="cod"
-                    value="cod"
-                    onChange={(e) => getPaymentMethod(e.target.value)}
-                  />
-                  <label
-                    htmlFor="cod"
-                    className="d-flex align-items-center gap-2"
-                  >
-                    <i class="bi bi-cash fs-1"></i> <h6>COD</h6>
-                  </label>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
+        )}
       </div>
-    </>
+
+      {/* 2. Enter New Address Section */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden transition-all">
+        <button
+          type="button"
+          onClick={() => toggleSection("new-address")}
+          className="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
+              2
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900">
+                Add New Delivery Address
+              </h3>
+              <p className="text-xs text-slate-500">Enter a new shipping destination</p>
+            </div>
+          </div>
+          {openSection === "new-address" ? (
+            <ChevronUp className="w-5 h-5 text-slate-400" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-slate-400" />
+          )}
+        </button>
+
+        {openSection === "new-address" && (
+          <div className="p-5 pt-0 border-t border-slate-100">
+            <form onSubmit={handleAddressSave} className="space-y-4 pt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    required
+                    placeholder="Rohit"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    required
+                    placeholder="Sharma"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Contact Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    name="contact"
+                    required
+                    placeholder="9876543210"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Flat / House No.
+                  </label>
+                  <input
+                    type="text"
+                    name="houseNo"
+                    required
+                    placeholder="Flat 402, Block B"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Street / Area
+                  </label>
+                  <input
+                    type="text"
+                    name="street"
+                    required
+                    placeholder="Stadium Road, Navrangpura"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Landmark
+                  </label>
+                  <input
+                    type="text"
+                    name="landmark"
+                    required
+                    placeholder="Near Cricket Ground"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    District / City
+                  </label>
+                  <input
+                    type="text"
+                    name="district"
+                    required
+                    placeholder="Ahmedabad"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Country
+                  </label>
+                  <select
+                    name="country"
+                    value={selectedCountry}
+                    onChange={(e) => setSelectedCountry(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="in">India</option>
+                    <option value="us">United States</option>
+                    <option value="ca">Canada</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    State
+                  </label>
+                  <select
+                    name="state"
+                    required
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    {states.map((s, i) => (
+                      <option key={i} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="w-full sm:w-1/3">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Pincode / Zip Code
+                </label>
+                <input
+                  type="text"
+                  name="zip"
+                  required
+                  placeholder="380009"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="pt-2">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  label="Save & Use Address"
+                />
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+
+      {/* 3. Payment Method Section */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden transition-all">
+        <button
+          type="button"
+          onClick={() => toggleSection("payment")}
+          className="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
+              3
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900">
+                Payment Method
+              </h3>
+              <p className="text-xs text-slate-500">
+                {selectedMethod ? `Selected: ${selectedMethod}` : "Choose payment gateway"}
+              </p>
+            </div>
+          </div>
+          {openSection === "payment" ? (
+            <ChevronUp className="w-5 h-5 text-slate-400" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-slate-400" />
+          )}
+        </button>
+
+        {openSection === "payment" && (
+          <div className="p-5 pt-0 border-t border-slate-100">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
+              {[
+                { id: "Credit Card", label: "Credit Card", icon: CreditCard },
+                { id: "Debit Card", label: "Debit Card", icon: CreditCard },
+                { id: "Net Banking", label: "Net Banking", icon: Landmark },
+                { id: "cod", label: "Cash on Delivery", icon: Banknote },
+              ].map((m) => {
+                const Icon = m.icon;
+                const isSelected = selectedMethod === m.id;
+                return (
+                  <label
+                    key={m.id}
+                    className={`p-4 rounded-xl border-2 flex items-center gap-3 cursor-pointer transition-all ${
+                      isSelected
+                        ? "border-indigo-600 bg-indigo-50/50 shadow-sm"
+                        : "border-slate-200 hover:border-slate-300 bg-white"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value={m.id}
+                      checked={isSelected}
+                      onChange={() => handleSelectPayment(m.id)}
+                      className="text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                    />
+                    <Icon className={`w-5 h-5 ${isSelected ? "text-indigo-600" : "text-slate-500"}`} />
+                    <span className="text-sm font-semibold text-slate-800">
+                      {m.label}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
