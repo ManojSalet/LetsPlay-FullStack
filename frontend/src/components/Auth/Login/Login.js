@@ -29,7 +29,12 @@ const Login = () => {
       const response = await loginUser({ email, password });
       if (response && response.data?.token) {
         login(response.data.token);
-        navigate(from, { replace: true });
+        const userRole = response.data?.user?.role;
+        if (userRole === "admin" && from === "/") {
+          navigate("/admin", { replace: true });
+        } else {
+          navigate(from, { replace: true });
+        }
       } else {
         setError("Invalid email or password.");
       }

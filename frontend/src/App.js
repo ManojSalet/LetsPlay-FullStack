@@ -19,6 +19,8 @@ import Equipment from "./components/Equipment/Equipment";
 import Wishlist from "./components/Wishlist/Wishlist";
 import SearchResults from "./components/Search/SearchResults";
 import NotFound from "./components/NotFound/NotFound";
+import AdminRoute from "./components/Admin/AdminRoute";
+import AdminLayout from "./components/Admin/AdminLayout";
 
 function App() {
   return (
@@ -33,6 +35,20 @@ function App() {
 }
 
 function MainLayout() {
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith("/admin");
+
+  if (isAdminPath) {
+    return (
+      <Routes>
+        <Route
+          path="/admin/*"
+          element={<AdminRoute element={<AdminLayout />} />}
+        />
+      </Routes>
+    );
+  }
+
   const excludedPaths = [
     "/login",
     "/signup",
@@ -41,7 +57,6 @@ function MainLayout() {
     "/ordersummary",
     "/search",
   ];
-  const location = useLocation();
 
   return (
     <>

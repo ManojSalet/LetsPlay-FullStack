@@ -12,7 +12,8 @@ import {
   Menu,
   X,
   LogIn,
-  UserPlus
+  UserPlus,
+  ShieldCheck
 } from "lucide-react";
 
 const Navbar = () => {
@@ -65,6 +66,16 @@ const Navbar = () => {
 
             {user ? (
               <>
+                {user.role === "admin" && (
+                  <NavLink
+                    to="/admin"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-xs transition-colors mr-1"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Admin Panel</span>
+                  </NavLink>
+                )}
+
                 <NavLink to="/wishlist" className={navLinkClass}>
                   <Heart className="w-4 h-4 text-rose-500" />
                   <span>Wishlist</span>
@@ -150,6 +161,17 @@ const Navbar = () => {
 
           {user ? (
             <>
+              {user.role === "admin" && (
+                <NavLink
+                  to="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg text-base font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
+                >
+                  <ShieldCheck className="w-5 h-5 text-indigo-600" />
+                  <span>Admin Panel</span>
+                </NavLink>
+              )}
+
               <NavLink
                 to="/wishlist"
                 onClick={() => setMobileMenuOpen(false)}

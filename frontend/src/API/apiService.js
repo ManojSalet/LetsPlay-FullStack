@@ -261,4 +261,157 @@ export const addReview = async (reviewData) => {
   }
 };
 
+// ==========================================
+// Admin APIs (Protected by protect & adminOnly)
+// ==========================================
+
+// Categories
+export const getAllCategories = async () => {
+  try {
+    const response = await api.get("/categories/");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to fetch categories";
+  }
+};
+
+export const createCategory = async (categoryData) => {
+  try {
+    const response = await api.post("/categories/add", categoryData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to create category";
+  }
+};
+
+export const updateCategory = async (categoryId, categoryData) => {
+  try {
+    const response = await api.put(`/categories/update/${categoryId}`, categoryData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to update category";
+  }
+};
+
+export const deleteCategory = async (categoryId) => {
+  try {
+    const response = await api.delete(`/categories/delete/${categoryId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to delete category";
+  }
+};
+
+// Sports
+export const createSport = async (sportData) => {
+  try {
+    const response = await api.post("/sports/add", sportData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to create sport";
+  }
+};
+
+export const updateSport = async (sportId, sportData) => {
+  try {
+    const response = await api.put(`/sports/update/${sportId}`, sportData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to update sport";
+  }
+};
+
+export const deleteSport = async (sportId) => {
+  try {
+    const response = await api.delete(`/sports/delete/${sportId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to delete sport";
+  }
+};
+
+// Equipment
+export const getAllEquipment = async () => {
+  try {
+    const response = await api.get("/equipment/");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to fetch equipment";
+  }
+};
+
+export const createEquipment = async (equipmentData) => {
+  try {
+    const response = await api.post("/equipment/add", equipmentData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to create equipment";
+  }
+};
+
+export const updateEquipment = async (equipmentId, equipmentData) => {
+  try {
+    const response = await api.put(`/equipment/update/${equipmentId}`, equipmentData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to update equipment";
+  }
+};
+
+export const deleteEquipment = async (equipmentId) => {
+  try {
+    const response = await api.delete(`/equipment/delete/${equipmentId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to delete equipment";
+  }
+};
+
+// Products Admin CRUD
+export const createProduct = async (productData) => {
+  try {
+    const response = await api.post("/products/addProduct", productData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to create product";
+  }
+};
+
+export const updateProduct = async (productId, productData) => {
+  try {
+    const response = await api.put(`/products/updateProduct/${productId}`, productData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to update product";
+  }
+};
+
+export const deleteProduct = async (productId) => {
+  try {
+    const response = await api.delete(`/products/deleteProduct/${productId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to delete product";
+  }
+};
+
+// Admin Orders
+export const getAdminOrders = async () => {
+  try {
+    const response = await api.get("/orders/admin/all");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to fetch admin orders";
+  }
+};
+
+export const updateOrderStatus = async (orderId, status, note = "") => {
+  try {
+    const response = await api.put(`/orders/admin/status/${orderId}`, { status, note });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to update order status";
+  }
+};
+
 export default createOrder;
