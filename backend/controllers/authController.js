@@ -7,12 +7,12 @@ require('dotenv').config();
 
 const sendVerificationEmail = async (user) => {
 	var transporter = nodemailer.createTransport({
-		host: 'sandbox.smtp.mailtrap.io',
-		port: '2525',
+		host: process.env.SMTP_HOST || 'sandbox.smtp.mailtrap.io',
+		port: process.env.SMTP_PORT || 2525,
 		secure: false,
 		auth: {
-			user: 'd89a43040a2f17',
-			pass: '2ab0ebc0eb0cae'
+			user: process.env.SMTP_USER || 'd89a43040a2f17',
+			pass: process.env.SMTP_PASS || '2ab0ebc0eb0cae'
 		}
 	});
 
@@ -107,12 +107,20 @@ exports.login = async (req, res) => {
 			return res.status(400).json({ message: "Invalid credentials" });
 		}
 
-		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-			expiresIn: '1h'
-		});
+		const token = jwt.sign(
+			{ userId: user._id, username: user.username, email: user.email },
+			process.env.JWT_SECRET,
+			{ expiresIn: '7d' }
+		);
 
 		return res.status(200).json({ 
-			token
+			token,
+			user: {
+				id: user._id,
+				username: user.username,
+				email: user.email,
+				mobile: user.mobile
+			}
 		});
 	} catch (error) {
 		console.error(error.message);

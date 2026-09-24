@@ -12,6 +12,18 @@ exports.createOrder = async (req, res) => {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
+    // Verify stock availability
+    for (const item of cart.items) {
+      if (!item.product) {
+        return res.status(400).json({ message: "One or more products in your cart are no longer available" });
+      }
+      if (item.quantity > (item.product.qty || 0)) {
+        return res.status(400).json({
+          message: `Insufficient stock for "${item.product.name}". Only ${item.product.qty || 0} unit(s) left in stock.`
+        });
+      }
+    }
+
     const orderItems = cart.items.map((item) => {
       const unitPrice = Number(item.product.selling_price?.toString() || item.product.selling_price || 0);
       return {
@@ -34,6 +46,13 @@ exports.createOrder = async (req, res) => {
     });
 
     await newOrder.save();
+
+    // Decrement inventory stock
+    for (const item of cart.items) {
+      await Product.findByIdAndUpdate(item.product._id, {
+        $inc: { qty: -item.quantity }
+      });
+    }
 
     // Clear the cart after creating the order
     await Cart.findOneAndDelete({ user: userId });

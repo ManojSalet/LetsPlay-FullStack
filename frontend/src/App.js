@@ -16,6 +16,9 @@ import { CartProvider } from "./Context/CartContext";
 import OrderSummary from "./components/OrderSummary/OrderSummary";
 import OrderHistory from "./components/Order History/OrderHistory";
 import Equipment from "./components/Equipment/Equipment";
+import Wishlist from "./components/Wishlist/Wishlist";
+import SearchResults from "./components/Search/SearchResults";
+import NotFound from "./components/NotFound/NotFound";
 
 function App() {
   return (
@@ -36,6 +39,7 @@ function MainLayout() {
     "/productview",
     "/checkout",
     "/ordersummary",
+    "/search",
   ];
   const location = useLocation();
 
@@ -45,23 +49,19 @@ function MainLayout() {
         <Navbar />
       </header>
       <main>
-        {/* Conditionally render Searchbar if not on /login and search route */}
+        {/* Conditionally render Searchbar if not on excluded paths */}
         {!excludedPaths.some((path) => location.pathname.startsWith(path)) && (
           <Searchbar />
         )}
         <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <HomeMain />
-              </>
-            }
-          />
+          <Route path="/" element={<HomeMain />} />
           <Route path="/productview/:id" element={<ProductView />} />
           <Route path="/category" element={<Category />} />
-          <Route path="/equipment/:id" element={<Equipment/>}/>
-          <Route path="/wishlist" element={<h1>Wishlist</h1>} />
+          <Route path="/equipment/:id" element={<Equipment />} />
+          <Route
+            path="/wishlist"
+            element={<ProtectedRoutes element={<Wishlist />} />}
+          />
           <Route
             path="/cart"
             element={<ProtectedRoutes element={<Cart />} />}
@@ -78,9 +78,13 @@ function MainLayout() {
             path="/orderhistory"
             element={<ProtectedRoutes element={<OrderHistory />} />}
           />
+          <Route path="/search" element={<SearchResults />} />
 
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signin />} />
+
+          {/* Catch-all 404 Route */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <footer>

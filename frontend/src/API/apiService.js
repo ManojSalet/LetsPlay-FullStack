@@ -204,4 +204,61 @@ export const getProductsByEquipment = async (equipmentId) => {
   }
 };
 
+// Wishlist APIs
+export const getWishlist = async () => {
+  try {
+    const response = await api.get("/wishlist/");
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 404) {
+      return { wishlist: { wishlist: [] } };
+    }
+    throw error.response?.data?.message || "Failed to fetch wishlist";
+  }
+};
+
+export const addToWishlist = async (productId) => {
+  try {
+    const response = await api.post("/wishlist/add", {
+      wishlist: [{ product: productId }],
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to add to wishlist";
+  }
+};
+
+export const removeFromWishlist = async (productId) => {
+  try {
+    const response = await api.delete("/wishlist/remove", {
+      data: { productId },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to remove from wishlist";
+  }
+};
+
+// Reviews APIs
+export const getProductReviews = async (productId) => {
+  try {
+    const response = await api.get("/reviews/product/" + productId);
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 404) {
+      return { reviews: [] };
+    }
+    throw error.response?.data?.message || "Failed to fetch reviews";
+  }
+};
+
+export const addReview = async (reviewData) => {
+  try {
+    const response = await api.post("/reviews/add", reviewData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to submit review";
+  }
+};
+
 export default createOrder;

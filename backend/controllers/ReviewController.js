@@ -6,8 +6,6 @@ exports.addReview = async (req, res) => {
 		const userId = req.user.id;
 		const { product, rating, comment } = req.body;
 
-		console.log(userId)
-
 		// Check if the product exists
 		const existingProduct = await Product.findById(product);
 		if (!existingProduct) {
@@ -76,7 +74,7 @@ exports.getProductReviews = async (req, res) => {
 		const { productId } = req.params;
 
 		// Find reviews for the specified product
-		const reviews = await UserReview.find({ product: productId }).populate('user', 'name');
+		const reviews = await UserReview.find({ product: productId }).populate('user', 'username');
 
 		res.status(200).json({ reviews });
 	} catch (error) {

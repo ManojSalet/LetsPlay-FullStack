@@ -22,10 +22,10 @@ export const CartProvider = ({ children }) => {
       // Check if the cart has items and handle empty cart scenario
       if (
         cartItem &&
-        Array.isArray(cartItem.cart.items) &&
-        cartItem.cart.items.length > 0
+        cartItem.cart &&
+        Array.isArray(cartItem.cart.items)
       ) {
-        setCartData(cartItem.cart.items); // Set the cart items
+        setCartData(cartItem.cart.items.filter((item) => item && item.product));
       } else {
         setCartData([]); // Clear cart data if cart is empty
       }
@@ -39,37 +39,33 @@ export const CartProvider = ({ children }) => {
 
   // Recalculate cart totals
   const calculateTotalPrice = () => {
-    const totalSelling = cartData.reduce((acc, item) => {
-      const sellingPrice =
-        parseFloat(item.product.selling_price?.$numberDecimal) || 0;
-      const quantity = parseInt(item.quantity) || 0;
-      const discount = parseFloat(item.product.discountPer) || 0;
-      const discountAmount = (sellingPrice * discount) / 100;
-      return acc + (sellingPrice - discountAmount) * quantity;
-    }, 0);
+    let totalSelling = 0;
+    let totalOriginalSelling = 0;
+    let totalOriginalPrice = 0;
+    let totalDisc = 0;
 
-    const totalOriginalSellingPrice = cartData.reduce((acc, item) => {
-      const sellingPrice =
-        parseFloat(item.product.selling_price?.$numberDecimal) || 0;
-      return acc + sellingPrice * item.quantity;
-    }, 0);
+    cartData.forEach((item) => {
+      if (!item || !item.product) return;
+      const product = item.product;
+      const qty = parseInt(item.quantity) || 1;
+      const rawPrice = parseFloat(product.price?.$numberDecimal || product.price) || 0;
+      const rawSellingPrice = parseFloat(product.selling_price?.$numberDecimal || product.selling_price) || rawPrice;
+      const discount = parseFloat(product.discountPer) || 0;
 
-    const totalPrice = cartData.reduce((acc, item) => {
-      const price = parseFloat(item.product.price?.$numberDecimal) || 0;
-      return acc + price * item.quantity;
-    }, 0);
+      const effectiveSelling = discount > 0 
+        ? rawSellingPrice - (rawSellingPrice * discount) / 100 
+        : rawSellingPrice;
 
-    const totalDiscount = cartData.reduce((acc, item) => {
-      const sellingPrice =
-        parseFloat(item.product.selling_price?.$numberDecimal) || 0;
-      const discount = parseFloat(item.product.discountPer) || 0;
-      return acc + (sellingPrice * discount * item.quantity) / 100;
-    }, 0);
+      totalSelling += effectiveSelling * qty;
+      totalOriginalSelling += rawSellingPrice * qty;
+      totalOriginalPrice += rawPrice * qty;
+      totalDisc += (rawSellingPrice * discount * qty) / 100;
+    });
 
     setTotalSellingPrice(totalSelling);
-    setTotalPrice(totalPrice);
-    setTotalDiscount(totalDiscount);
-    setSellingPrice(totalOriginalSellingPrice);
+    setTotalPrice(totalOriginalPrice);
+    setTotalDiscount(totalDisc);
+    setSellingPrice(totalOriginalSelling);
   };
 
   // Remove item from cart

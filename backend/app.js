@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
@@ -20,10 +19,11 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// CORS configuration
+// CORS configuration supporting modern REST methods
 app.use(cors({
-	origin: 'http://localhost:3000', // Adjust this URL to match your frontend
+	origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
 	credentials: true,
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 	allowedHeaders: ['Authorization', 'Content-Type']
 }));
 
@@ -42,6 +42,19 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
+
+// Catch-all 404 handler for undefined API routes
+app.use((req, res, next) => {
+	res.status(404).json({ message: `Cannot ${req.method} ${req.originalUrl}` });
+});
+
+// Centralized error handling middleware
+app.use((err, req, res, next) => {
+	console.error('Server error:', err);
+	res.status(err.status || 500).json({
+		message: err.message || 'Internal Server Error'
+	});
+});
 
 // Start server
 const PORT = process.env.PORT || 5000;

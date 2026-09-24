@@ -9,8 +9,7 @@ const Searchbar = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      // In future phase, can navigate to dedicated search page or pass search params
-      console.log("Searching for:", searchTerm);
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
     }
   };
 
