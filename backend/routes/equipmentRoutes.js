@@ -11,6 +11,7 @@ const {
 const { protect, adminOnly } = require('../middlewares/authMiddleware');
 
 // Public catalog routes
+router.get('/', showAllEquipment);
 router.get('/all', showAllEquipment);
 router.get('/find/:equipmentId', findOneEquipment);
 router.get('/by-sport/:sportId', showEquipmentBySport);

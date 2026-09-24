@@ -4,6 +4,7 @@ const productController = require('../controllers/productController');
 const { protect, adminOnly } = require('../middlewares/authMiddleware');
 
 // Public catalog routes
+router.get('/', productController.showAllProducts);
 router.get('/all', productController.showAllProducts);
 router.get('/:productId', productController.viewProduct);
 router.get('/equipment/:equipmentId', productController.viewProductsByEquipment);
