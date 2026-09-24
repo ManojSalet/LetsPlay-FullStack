@@ -1,19 +1,24 @@
 const express = require('express');
 const {
-	addSport,
-	updateSport,
-	deleteSport,
-	findOneSport,
-	showAllSports,
-	showSportsByCategory
+  addSport,
+  updateSport,
+  deleteSport,
+  findOneSport,
+  showAllSports,
+  showSportsByCategory,
 } = require('../controllers/sportController');
+const { protect, adminOnly } = require('../middlewares/authMiddleware');
+
 const router = express.Router();
 
-router.post('/add', addSport);
-router.put('/update/:sportId', updateSport);
-router.delete('/delete/:sportId', deleteSport);
-router.get('/:sportId', findOneSport);
+// Public catalog routes
 router.get('/', showAllSports);
+router.get('/:sportId', findOneSport);
 router.get('/category/:categoryId', showSportsByCategory);
+
+// Protected Admin mutations
+router.post('/add', protect, adminOnly, addSport);
+router.put('/update/:sportId', protect, adminOnly, updateSport);
+router.delete('/delete/:sportId', protect, adminOnly, deleteSport);
 
 module.exports = router;
