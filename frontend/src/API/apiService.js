@@ -10,9 +10,21 @@ const api = axios.create({
   },
 });
 
-//add token to headers if available
+// Add token to headers based on session context (admin in sessionStorage vs customer in localStorage)
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const adminToken = sessionStorage.getItem("admin_token");
+  const customerToken = localStorage.getItem("customer_token") || localStorage.getItem("token");
+
+  // Prioritize adminToken when making administrative calls or when inside /admin
+  const isAdminRequest =
+    config.url.includes("/admin") ||
+    config.url.includes("/upload") ||
+    window.location.pathname.startsWith("/admin");
+
+  const token = isAdminRequest && adminToken 
+    ? adminToken 
+    : (customerToken || adminToken);
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -71,12 +83,13 @@ export const addToCart = async (productId, quantity) => {
 
 //get all product to cart
 export const getCart = async () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("customer_token") || localStorage.getItem("token") || sessionStorage.getItem("admin_token");
   try {
     if (token) {
       const response = await api.get("/cart/");
       return response.data;
     }
+    return { cart: { items: [] } };
   } catch (error) {
     throw error.response?.data?.message || "Failed to fetch cart";
   }

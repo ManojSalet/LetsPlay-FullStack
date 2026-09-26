@@ -8,41 +8,87 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
+  // Helper to safely decode and check token expiration
+  const decodeAndValidateToken = (rawToken) => {
+    if (!rawToken) return null;
+    try {
+      const decoded = jwtDecode(rawToken);
+      if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+        return null;
+      }
+      return decoded;
+    } catch (error) {
+      console.error("Invalid token format:", error);
+      return null;
+    }
+  };
 
-    if (storedToken) {
-      setToken(storedToken);
-      try {
-        const decodedUser = jwtDecode(storedToken);
-        setUser(decodedUser);
-      } catch (error) {
-        console.error("error decoding token", error);
+  useEffect(() => {
+    // 1. Check for tab-isolated Admin session in sessionStorage first
+    const adminToken = sessionStorage.getItem("admin_token");
+    if (adminToken) {
+      const decodedAdmin = decodeAndValidateToken(adminToken);
+      if (decodedAdmin && decodedAdmin.role === "admin") {
+        setToken(adminToken);
+        setUser(decodedAdmin);
+        return;
+      } else {
+        sessionStorage.removeItem("admin_token");
+      }
+    }
+
+    // 2. Check for persistent Customer session in localStorage
+    const customerToken = localStorage.getItem("customer_token") || localStorage.getItem("token");
+    if (customerToken) {
+      const decodedCustomer = decodeAndValidateToken(customerToken);
+      if (decodedCustomer) {
+        setToken(customerToken);
+        setUser(decodedCustomer);
+        if (!localStorage.getItem("customer_token")) {
+          localStorage.setItem("customer_token", customerToken);
+        }
+      } else {
+        localStorage.removeItem("customer_token");
+        localStorage.removeItem("token");
       }
     }
   }, []);
 
-  const login = (token) => {
-    setToken(token);
-    localStorage.setItem("token", token);
+  const login = (newToken) => {
+    const decodedUser = decodeAndValidateToken(newToken);
+    if (!decodedUser) return;
 
-    try {
-      const decodedUser = jwtDecode(token);
-      setUser(decodedUser);
-    } catch (error) {
-      console.error("error decoding token", error);
+    setToken(newToken);
+    setUser(decodedUser);
+
+    if (decodedUser.role === "admin") {
+      // Store elevated admin session strictly in this tab's sessionStorage
+      sessionStorage.setItem("admin_token", newToken);
+    } else {
+      // Store customer session in persistent localStorage
+      localStorage.setItem("customer_token", newToken);
+      localStorage.setItem("token", newToken);
+      // Clear any conflicting admin session from this tab
+      sessionStorage.removeItem("admin_token");
     }
   };
 
   const logout = () => {
+    if (user?.role === "admin" || sessionStorage.getItem("admin_token")) {
+      sessionStorage.removeItem("admin_token");
+    }
+    if (user?.role !== "admin") {
+      localStorage.removeItem("customer_token");
+      localStorage.removeItem("token");
+    }
     setToken(null);
     setUser(null);
-    localStorage.removeItem("token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../Auth/AuthContext";
+import { jwtDecode } from "jwt-decode";
 import { ShieldAlert, ArrowLeft, Loader2 } from "lucide-react";
 
 const AdminRoute = ({ element }) => {
@@ -9,15 +10,31 @@ const AdminRoute = ({ element }) => {
   const location = useLocation();
 
   useEffect(() => {
+    // If context user is not set yet, check sessionStorage for admin_token first
     if (!user) {
-      const storedToken = localStorage.getItem("token");
-      if (!storedToken) {
+      const adminToken = sessionStorage.getItem("admin_token");
+      if (adminToken) {
+        try {
+          const decoded = jwtDecode(adminToken);
+          if (decoded && decoded.role === "admin" && (!decoded.exp || decoded.exp * 1000 > Date.now())) {
+            setUser(decoded);
+            setIsLoading(false);
+            return;
+          }
+        } catch (e) {
+          sessionStorage.removeItem("admin_token");
+        }
+      }
+
+      const customerToken = localStorage.getItem("customer_token") || localStorage.getItem("token");
+      if (!adminToken && !customerToken) {
         setIsLoading(false);
         return;
       }
     }
     setIsLoading(false);
-  }, [user]);
+  }, [user, setUser]);
+
 
   if (isLoading) {
     return (
