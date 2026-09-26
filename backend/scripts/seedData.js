@@ -9,6 +9,12 @@ const Category = require('../models/Category');
 const Sport = require('../models/Sport');
 const Equipment = require('../models/Equipment');
 const Product = require('../models/Product');
+const Order = require('../models/Order');
+const Address = require('../models/Address');
+const Cart = require('../models/Cart');
+const Wishlist = require('../models/Wishlist');
+const Payment = require('../models/Payment');
+const UserReview = require('../models/UserReview');
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/LetsPlay';
 
@@ -18,15 +24,22 @@ const seedDatabase = async () => {
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB Connected for Seeding...');
 
-    // 1. Clear existing catalog data and default users
-    console.log('Clearing existing data...');
+    // 1. Clear all existing collections for a clean slate
+    console.log('Clearing all existing collections for clean slate...');
     await Promise.all([
-      User.deleteMany({ email: { $in: ['admin@letsplay.com', 'customer@letsplay.com', 'sinojiyahet189@gmail.com'] } }),
+      User.deleteMany({}),
       Category.deleteMany({}),
       Sport.deleteMany({}),
       Equipment.deleteMany({}),
       Product.deleteMany({}),
+      Order.deleteMany({}),
+      Address.deleteMany({}),
+      Cart.deleteMany({}),
+      Wishlist.deleteMany({}),
+      Payment.deleteMany({}),
+      UserReview.deleteMany({}),
     ]);
+
 
     // 2. Seed Default Admin & Customer Accounts
     console.log('Seeding Users...');
@@ -367,6 +380,133 @@ const seedDatabase = async () => {
       }
     }
 
+    // 6. Seed Customer Address
+    console.log('Seeding Customer Address...');
+    const customerAddress = await Address.create({
+      userId: customerUser._id,
+      details: [
+        {
+          name: 'Manoj Salet',
+          houseNo: 'Flat 402, Shivalik Heights',
+          street: 'University Road',
+          landmark: 'Opposite Sports Complex',
+          pin: 360005,
+          district: 'Rajkot',
+          state: 'Gujarat',
+          country: 'India',
+          contact: 9876543210,
+          select: true,
+        },
+      ],
+    });
+
+    // 7. Seed Realistic Initial Orders & Payments
+    console.log('Seeding Realistic Orders & Payments...');
+    const order1 = await Order.create({
+      orderNumber: 'LP-20260926-1001',
+      user: customerUser._id,
+      items: [
+        {
+          product: createdProducts[0]._id, // SG Willow Bat
+          quantity: 1,
+          price: createdProducts[0].selling_price,
+        },
+      ],
+      totalPrice: createdProducts[0].selling_price,
+      shippingAddress: customerAddress._id,
+      paymentMethod: 'UPI',
+      paymentStatus: 'Paid',
+      status: 'Delivered',
+      orderStatus: 'Delivered',
+      statusHistory: [
+        { status: 'Pending', timestamp: new Date(Date.now() - 4 * 86400000), note: 'Order placed via UPI' },
+        { status: 'Processing', timestamp: new Date(Date.now() - 3 * 86400000), note: 'Payment verified and items packed' },
+        { status: 'Shipped', timestamp: new Date(Date.now() - 2 * 86400000), note: 'Dispatched via BlueDart Express (AWB: BLR847291)' },
+        { status: 'Delivered', timestamp: new Date(Date.now() - 1 * 86400000), note: 'Delivered to customer' },
+      ],
+    });
+
+    await Payment.create({
+      order: order1._id,
+      transactionId: 'TXN-UPI-9928172',
+      amount: order1.totalPrice,
+      paymentMethod: 'UPI',
+      paymentStatus: 'Success',
+    });
+
+    const order2Total = createdProducts[2].selling_price + createdProducts[3].selling_price * 2;
+    const order2 = await Order.create({
+      orderNumber: 'LP-20260926-1002',
+      user: customerUser._id,
+      items: [
+        {
+          product: createdProducts[2]._id, // Yonex Racket
+          quantity: 1,
+          price: createdProducts[2].selling_price,
+        },
+        {
+          product: createdProducts[3]._id, // Shuttlecocks
+          quantity: 2,
+          price: createdProducts[3].selling_price,
+        },
+      ],
+      totalPrice: order2Total,
+      shippingAddress: customerAddress._id,
+      paymentMethod: 'COD',
+      paymentStatus: 'Pending',
+      status: 'Processing',
+      orderStatus: 'Processing',
+      statusHistory: [
+        { status: 'Pending', timestamp: new Date(Date.now() - 12 * 3600000), note: 'Order placed via Cash on Delivery' },
+        { status: 'Processing', timestamp: new Date(Date.now() - 4 * 3600000), note: 'Confirmed with customer by dispatch team' },
+      ],
+    });
+
+    await Payment.create({
+      order: order2._id,
+      transactionId: 'TXN-COD-4819203',
+      amount: order2Total,
+      paymentMethod: 'COD',
+      paymentStatus: 'Pending',
+    });
+
+    // 8. Seed Customer Reviews
+    console.log('Seeding Customer Reviews...');
+    await UserReview.create([
+      {
+        user: customerUser._id,
+        product: createdProducts[0]._id,
+        rating: 5,
+        comment: 'Phenomenal balance and punch! Genuine English willow quality. Highly recommended.',
+      },
+      {
+        user: customerUser._id,
+        product: createdProducts[2]._id,
+        rating: 4,
+        comment: 'High string tension and excellent smash speed. Light in hand and premium build.',
+      },
+    ]);
+
+    // 9. Seed Cart & Wishlist
+    console.log('Seeding Cart and Wishlist...');
+    await Cart.create({
+      user: customerUser._id,
+      items: [
+        {
+          product: createdProducts[7]._id, // Nivia Football
+          quantity: 1,
+        },
+      ],
+    });
+
+    await Wishlist.create({
+      userId: customerUser._id,
+      wishlist: [
+        { products: createdProducts[4]._id }, // Table Tennis Racket
+        { products: createdProducts[5]._id }, // Chess Clock
+      ],
+    });
+
     console.log('\n=========================================');
     console.log('✅ DATABASE SEEDING COMPLETED SUCCESSFULLY!');
     console.log('=========================================');
@@ -374,6 +514,8 @@ const seedDatabase = async () => {
     console.log(`- Sports Seeded: 6 (Cricket, Soccer, Basketball, Badminton, Table Tennis, Chess)`);
     console.log(`- Equipment Seeded: 6 categories`);
     console.log(`- Products Seeded: ${createdProducts.length} items`);
+    console.log(`- Sample Orders Seeded: 2 verified orders with payment & tracking history`);
+    console.log(`- Reviews Seeded: 2 verified customer reviews`);
     console.log('\n--- Default Test Accounts ---');
     console.log('1. Admin Account:');
     console.log('   Email:    admin@letsplay.com');
@@ -391,5 +533,6 @@ const seedDatabase = async () => {
     process.exit(1);
   }
 };
+
 
 seedDatabase();
