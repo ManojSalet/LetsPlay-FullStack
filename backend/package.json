@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "seed": "node scripts/seedData.js"
+    "seed": "node scripts/seedData.js",
+    "migrate:orders": "node scripts/migrateLegacyOrders.js"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.3",
+    "multer": "^2.4.0",
     "nodemailer": "^6.9.14"
   },
   "devDependencies": {

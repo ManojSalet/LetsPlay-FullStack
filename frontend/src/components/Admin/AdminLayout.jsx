@@ -10,6 +10,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  restoreProduct,
   updateOrderStatus,
   createCategory,
   updateCategory,
@@ -72,7 +73,7 @@ const AdminLayout = () => {
       setError(null);
 
       const [prodsRes, ordersRes, catsRes, sportsRes, equipRes] = await Promise.all([
-        getAllProducts().catch(() => ({ products: [] })),
+        getAllProducts({ includeArchived: "true" }).catch(() => ({ products: [] })),
         getAdminOrders().catch(() => ({ orders: [] })),
         getAllCategories().catch(() => ({ categories: [] })),
         getAllSports().catch(() => ({ sports: [] })),
@@ -118,8 +119,21 @@ const AdminLayout = () => {
   };
 
   const handleDeleteProduct = async (productId) => {
-    await deleteProduct(productId);
-    setProducts((prev) => prev.filter((p) => p._id !== productId));
+    const res = await deleteProduct(productId);
+    if (res && res.product) {
+      setProducts((prev) => prev.map((p) => (p._id === productId ? res.product : p)));
+    } else {
+      setProducts((prev) =>
+        prev.map((p) => (p._id === productId ? { ...p, isDeleted: true, isActive: false } : p))
+      );
+    }
+  };
+
+  const handleRestoreProduct = async (productId) => {
+    const res = await restoreProduct(productId);
+    if (res && res.product) {
+      setProducts((prev) => prev.map((p) => (p._id === productId ? res.product : p)));
+    }
   };
 
   // Order Operations
@@ -448,6 +462,7 @@ const AdminLayout = () => {
                   equipmentList={equipmentList}
                   onSaveProduct={handleSaveProduct}
                   onDeleteProduct={handleDeleteProduct}
+                  onRestoreProduct={handleRestoreProduct}
                   modalState={productModalState}
                   setModalState={setProductModalState}
                 />

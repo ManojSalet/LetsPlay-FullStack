@@ -68,14 +68,24 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-// Helpful index for fast catalog searches
+// Helpful indexes for fast catalog searches and filtering
 productSchema.index({ name: 'text', description: 'text', brand: 'text' });
 productSchema.index({ sport: 1, equipment: 1, category: 1 });
+productSchema.index({ isDeleted: 1, isActive: 1 });
 
 module.exports = mongoose.model('Product', productSchema);

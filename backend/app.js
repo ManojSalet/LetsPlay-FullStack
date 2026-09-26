@@ -12,6 +12,8 @@ const reviewRoutes = require('./routes/userReviewRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -30,6 +32,9 @@ app.use(cors({
 // Middleware to parse JSON
 app.use(express.json());
 
+// Static uploads folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Route handlers
 app.use('/api/auth', authRoutes);
 app.use('/api/addresses', addressRoutes);
@@ -42,6 +47,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Catch-all 404 handler for undefined API routes
 app.use((req, res, next) => {

@@ -51,9 +51,14 @@ const orderSchema = new mongoose.Schema(
       enum: ['Pending', 'Paid', 'Failed'],
       default: 'Pending',
     },
+    status: {
+      type: String,
+      enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+      default: 'Processing',
+    },
     orderStatus: {
       type: String,
-      enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
+      enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
       default: 'Processing',
     },
     statusHistory: [
@@ -77,5 +82,14 @@ const orderSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+orderSchema.pre('save', function (next) {
+  if (this.status && !this.orderStatus) {
+    this.orderStatus = this.status;
+  } else if (this.orderStatus && !this.status) {
+    this.status = this.orderStatus;
+  }
+  next();
+});
 
 module.exports = mongoose.model('Order', orderSchema);

@@ -13,6 +13,7 @@ router.get('/sport/:sportId', productController.viewProductsBySport);
 // Protected Admin mutations
 router.post('/addProduct', protect, adminOnly, productController.addProduct);
 router.put('/updateProduct/:productId', protect, adminOnly, productController.updateProduct);
+router.put('/restoreProduct/:productId', protect, adminOnly, productController.restoreProduct);
 router.delete('/deleteProduct/:productId', protect, adminOnly, productController.deleteProduct);
 
 module.exports = router;

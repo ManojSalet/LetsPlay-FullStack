@@ -159,7 +159,7 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-// Delete a product
+// Soft-delete (archive) a product
 exports.deleteProduct = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -169,19 +169,42 @@ exports.deleteProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    if (product.equipment) {
-      const equipment = await Equipment.findById(product.equipment);
-      if (equipment) {
-        equipment.products.pull(product._id);
-        await equipment.save();
-      }
-    }
+    product.isDeleted = true;
+    product.isActive = false;
+    product.deletedAt = new Date();
+    await product.save();
 
-    await product.deleteOne();
-
-    res.status(200).json({ message: "Product deleted successfully" });
+    res.status(200).json({
+      message: "Product archived successfully (soft deleted)",
+      product,
+    });
   } catch (error) {
     console.error("Error in deleteProduct:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Restore an archived (soft-deleted) product
+exports.restoreProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.isDeleted = false;
+    product.isActive = true;
+    product.deletedAt = null;
+    await product.save();
+
+    res.status(200).json({
+      message: "Product restored successfully",
+      product,
+    });
+  } catch (error) {
+    console.error("Error in restoreProduct:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -189,8 +212,13 @@ exports.deleteProduct = async (req, res) => {
 // Show all products with optional filters
 exports.showAllProducts = async (req, res) => {
   try {
-    const { category, sport, equipment, inStock } = req.query;
-    const filter = { isActive: true };
+    const { category, sport, equipment, inStock, includeArchived } = req.query;
+    const filter = {};
+
+    // Filter out soft-deleted items unless specifically requested (e.g. by admin)
+    if (includeArchived !== "true") {
+      filter.isDeleted = { $ne: true };
+    }
 
     if (category) filter.category = category;
     if (sport) filter.sport = sport;
@@ -200,9 +228,10 @@ exports.showAllProducts = async (req, res) => {
     const products = await Product.find(filter)
       .populate("equipment")
       .populate("sport")
+      .populate("category")
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ products });
+    res.status(200).json({ products, count: products.length });
   } catch (error) {
     console.error("Error in showAllProducts:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -238,6 +267,7 @@ exports.viewProductsByEquipment = async (req, res) => {
     const products = await Product.find({
       equipment: equipmentId,
       isActive: true,
+      isDeleted: { $ne: true },
     }).sort({ createdAt: -1 });
 
     res.status(200).json({ products });
@@ -255,6 +285,7 @@ exports.viewProductsBySport = async (req, res) => {
     const products = await Product.find({
       sport: sportId,
       isActive: true,
+      isDeleted: { $ne: true },
     })
       .populate("equipment")
       .sort({ createdAt: -1 });

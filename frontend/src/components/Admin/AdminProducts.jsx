@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import {
   Package,
   Plus,
@@ -14,8 +14,13 @@ import {
   Tag,
   Layers,
   X,
-  Loader2
+  Loader2,
+  Upload,
+  RotateCcw,
+  Archive,
+  Link as LinkIcon
 } from "lucide-react";
+import { uploadImage, getFullImageUrl } from "../../API/apiService";
 
 const AdminProducts = ({
   products = [],
@@ -24,6 +29,7 @@ const AdminProducts = ({
   equipmentList = [],
   onSaveProduct,
   onDeleteProduct,
+  onRestoreProduct,
   modalState,
   setModalState,
 }) => {
@@ -31,6 +37,9 @@ const AdminProducts = ({
   const [stockFilter, setStockFilter] = useState("all");
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [imageMode, setImageMode] = useState("upload");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Form State for Add / Edit Modal
   const [formData, setFormData] = useState({
@@ -90,6 +99,30 @@ const AdminProducts = ({
     setModalState({ isOpen: true, mode: "edit", product });
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setFormError("Selected file exceeds 5MB limit. Please upload a smaller image.");
+      return;
+    }
+
+    setUploadingImage(true);
+    setFormError("");
+    try {
+      const res = await uploadImage(file);
+      if (res && res.url) {
+        setFormData((prev) => ({ ...prev, image_url: res.url }));
+      }
+    } catch (err) {
+      setFormError(typeof err === "string" ? err : "Failed to upload image.");
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   // Filter products based on search and stock status
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
@@ -99,6 +132,13 @@ const AdminProducts = ({
         p.brand?.toLowerCase().includes(searchTerm.toLowerCase());
 
       if (!matchSearch) return false;
+
+      if (stockFilter === "archived") {
+        return p.isDeleted === true;
+      }
+
+      // If not looking specifically at archived, hide archived products
+      if (p.isDeleted === true) return false;
 
       if (stockFilter === "low") {
         return Number(p.qty) > 0 && Number(p.qty) <= 5;
@@ -214,11 +254,12 @@ const AdminProducts = ({
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="text-xs font-semibold text-slate-400 mr-1 hidden sm:inline">Filter:</span>
           {[
-            { id: "all", label: "All Items" },
+            { id: "all", label: "All Active" },
             { id: "low", label: "Low Stock (≤5)" },
             { id: "out", label: "Out of Stock" },
             { id: "active", label: "Active" },
             { id: "inactive", label: "Inactive" },
+            { id: "archived", label: "Archived (Soft-Deleted)" },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -280,7 +321,7 @@ const AdminProducts = ({
                           <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
                             {imageSrc ? (
                               <img
-                                src={imageSrc}
+                                src={getFullImageUrl(imageSrc)}
                                 alt={p.name}
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
@@ -358,34 +399,54 @@ const AdminProducts = ({
 
                       {/* Status */}
                       <td className="py-4 px-4">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold ${
-                          p.isActive !== false
-                            ? "bg-indigo-50 text-indigo-700"
-                            : "bg-slate-100 text-slate-500"
-                        }`}>
-                          {p.isActive !== false ? "Active" : "Hidden"}
-                        </span>
+                        {p.isDeleted ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                            Archived
+                          </span>
+                        ) : (
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold ${
+                            p.isActive !== false
+                              ? "bg-indigo-50 text-indigo-700"
+                              : "bg-slate-100 text-slate-500"
+                          }`}>
+                            {p.isActive !== false ? "Active" : "Hidden"}
+                          </span>
+                        )}
                       </td>
 
                       {/* Actions */}
                       <td className="py-4 pr-6 pl-4 text-right">
                         <div className="inline-flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => handleOpenEdit(p)}
-                            className="p-2 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
-                            title="Edit Product"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setDeleteConfirmId(p._id)}
-                            className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                            title="Delete Product"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          {p.isDeleted ? (
+                            <button
+                              type="button"
+                              onClick={() => onRestoreProduct(p._id)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-emerald-700 bg-emerald-50 hover:bg-emerald-100 text-xs font-bold transition-colors cursor-pointer"
+                              title="Restore Product"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              <span>Restore</span>
+                            </button>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEdit(p)}
+                                className="p-2 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
+                                title="Edit Product"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setDeleteConfirmId(p._id)}
+                                className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                title="Archive Product (Soft Delete)"
+                              >
+                                <Archive className="w-4 h-4" />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -591,31 +652,110 @@ const AdminProducts = ({
                 </div>
               </div>
 
-              {/* Image URL & Preview */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Product Image URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="https://images.unsplash.com/... or /images/..."
-                  className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                />
-                {formData.image_url && (
-                  <div className="mt-2.5 flex items-center gap-3 p-2 bg-slate-50 rounded-xl border border-slate-200">
-                    <img
-                      src={formData.image_url}
-                      alt="Preview"
-                      className="w-12 h-12 rounded-lg object-cover bg-white"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
+              {/* Image Upload or URL Selector */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Product Image
+                  </label>
+                  <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setImageMode("upload")}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md font-semibold transition-colors cursor-pointer ${
+                        imageMode === "upload"
+                          ? "bg-white text-indigo-600 shadow-xs"
+                          : "text-slate-500 hover:text-slate-800"
+                      }`}
+                    >
+                      <Upload className="w-3 h-3" />
+                      <span>Upload File</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageMode("url")}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md font-semibold transition-colors cursor-pointer ${
+                        imageMode === "url"
+                          ? "bg-white text-indigo-600 shadow-xs"
+                          : "text-slate-500 hover:text-slate-800"
+                      }`}
+                    >
+                      <LinkIcon className="w-3 h-3" />
+                      <span>Image URL</span>
+                    </button>
+                  </div>
+                </div>
+
+                {imageMode === "upload" ? (
+                  <div>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileUpload}
+                      accept="image/png, image/jpeg, image/webp, image/gif, image/svg+xml"
+                      className="hidden"
+                      id="productImageUploadInput"
                     />
-                    <span className="text-xs text-slate-500 truncate">
-                      Image preview loaded
-                    </span>
+                    <label
+                      htmlFor="productImageUploadInput"
+                      className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-indigo-400 rounded-2xl p-4 cursor-pointer bg-slate-50/50 hover:bg-indigo-50/20 transition-all text-center"
+                    >
+                      {uploadingImage ? (
+                        <div className="flex items-center gap-2 text-indigo-600 text-xs font-semibold py-2">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Uploading image to server...</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          <Upload className="w-5 h-5 text-indigo-500 mx-auto" />
+                          <p className="text-xs font-bold text-slate-700">
+                            Click to upload image from your computer
+                          </p>
+                          <p className="text-[11px] text-slate-400">
+                            PNG, JPG, WEBP, or SVG up to 5MB
+                          </p>
+                        </div>
+                      )}
+                    </label>
+                  </div>
+                ) : (
+                  <input
+                    type="url"
+                    value={formData.image_url}
+                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                    placeholder="https://images.unsplash.com/... or /uploads/..."
+                    className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                )}
+
+                {/* Preview Box */}
+                {formData.image_url && (
+                  <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-2xl border border-slate-200 gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img
+                        src={getFullImageUrl(formData.image_url)}
+                        alt="Preview"
+                        className="w-12 h-12 rounded-xl object-cover bg-white border border-slate-200 shrink-0"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-slate-800 truncate">
+                          Image Loaded
+                        </p>
+                        <p className="text-[11px] font-mono text-slate-400 truncate">
+                          {formData.image_url}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, image_url: "" })}
+                      className="px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg shrink-0 cursor-pointer"
+                    >
+                      Remove
+                    </button>
                   </div>
                 )}
               </div>
@@ -659,7 +799,7 @@ const AdminProducts = ({
                 </button>
                 <button
                   type="submit"
-                  disabled={formLoading}
+                  disabled={formLoading || uploadingImage}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-sm transition-colors cursor-pointer disabled:opacity-50"
                 >
                   {formLoading ? (
@@ -678,18 +818,18 @@ const AdminProducts = ({
       )}
 
       {/* ========================================================= */}
-      {/* Delete Confirmation Modal */}
+      {/* Soft Delete (Archive) Confirmation Modal */}
       {/* ========================================================= */}
       {deleteConfirmId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl border border-slate-100 w-full max-w-sm p-6 text-center space-y-4 shadow-2xl">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
-              <Trash2 className="w-6 h-6" />
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+              <Archive className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-900">Confirm Deletion</h3>
-              <p className="text-xs text-slate-500 mt-1">
-                Are you sure you want to remove this product from the catalog? This action cannot be undone.
+              <h3 className="text-base font-bold text-slate-900">Archive Product?</h3>
+              <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                This item will be safely soft-deleted and hidden from customer storefronts. Existing customer orders and past purchase histories will remain 100% intact. You can restore it at any time.
               </p>
             </div>
             <div className="flex gap-2.5 pt-2">
@@ -704,9 +844,9 @@ const AdminProducts = ({
                 type="button"
                 disabled={isDeleting}
                 onClick={handleConfirmDelete}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer disabled:opacity-50"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer disabled:opacity-50"
               >
-                {isDeleting ? "Deleting..." : "Delete"}
+                {isDeleting ? "Archiving..." : "Archive Product"}
               </button>
             </div>
           </div>

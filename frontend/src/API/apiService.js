@@ -39,10 +39,10 @@ export const registerUser = async (userData) => {
   }
 };
 
-//get all Products fro backend
-export const getAllProducts = async () => {
+//get all Products from backend
+export const getAllProducts = async (params = {}) => {
   try {
-    const response = await api.get("/products/all");
+    const response = await api.get("/products/all", { params });
     return response.data;
   } catch (error) {
     throw error.response?.data?.message || "Failed to fetch products";
@@ -393,6 +393,41 @@ export const deleteProduct = async (productId) => {
   } catch (error) {
     throw error.response?.data?.message || "Failed to delete product";
   }
+};
+
+export const restoreProduct = async (productId) => {
+  try {
+    const response = await api.put(`/products/restoreProduct/${productId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to restore product";
+  }
+};
+
+// Image Upload API (Multipart)
+export const uploadImage = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append("image", file);
+    const response = await api.post("/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to upload image";
+  }
+};
+
+// Helper to resolve relative and absolute image paths
+export const getFullImageUrl = (imagePath) => {
+  if (!imagePath) return "";
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://") || imagePath.startsWith("data:")) {
+    return imagePath;
+  }
+  const apiRoot = BASE_URL.replace(/\/api\/?$/, "");
+  return `${apiRoot}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
 };
 
 // Admin Orders

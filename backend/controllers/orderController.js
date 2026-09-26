@@ -132,18 +132,23 @@ exports.adminGetAllOrders = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { orderStatus, note } = req.body;
+    const { orderStatus, status, note } = req.body;
+    const targetStatus = status || orderStatus;
 
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    order.orderStatus = orderStatus || order.orderStatus;
+    if (targetStatus) {
+      order.status = targetStatus;
+      order.orderStatus = targetStatus;
+    }
+
     order.statusHistory.push({
-      status: orderStatus,
+      status: targetStatus || order.status || order.orderStatus,
       changedAt: new Date(),
-      note: note || `Status updated to ${orderStatus}`,
+      note: note || `Status updated to ${targetStatus || order.status}`,
     });
 
     await order.save();
