@@ -462,4 +462,80 @@ export const updateOrderStatus = async (orderId, status, note = "") => {
   }
 };
 
+// --- User Profile & Account Settings APIs ---
+export const getUserProfile = async () => {
+  try {
+    const response = await api.get("/users/profile");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to fetch user profile";
+  }
+};
+
+export const updateUserProfile = async (profileData) => {
+  try {
+    const response = await api.put("/users/profile", profileData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to update profile";
+  }
+};
+
+export const changeUserPassword = async (passwordData) => {
+  try {
+    const response = await api.put("/users/change-password", passwordData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to change password";
+  }
+};
+
+// Customer: Cancel Order
+export const cancelCustomerOrder = async (orderId, reason = "") => {
+  try {
+    const response = await api.put(`/orders/cancel/${orderId}`, { reason });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to cancel order";
+  }
+};
+
+// --- Address Management APIs ---
+export const getMyAddresses = async () => {
+  try {
+    const response = await api.get("/addresses/my-addresses");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to fetch addresses";
+  }
+};
+
+export const updateAddressById = async (addressId, addressData) => {
+  try {
+    const response = await api.put(`/addresses/update/${addressId}`, addressData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to update address";
+  }
+};
+
+export const deleteAddressById = async (addressId) => {
+  try {
+    const response = await api.delete(`/addresses/delete/${addressId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to delete address";
+  }
+};
+
+export const setDefaultAddressById = async (addressId) => {
+  try {
+    const response = await api.put(`/addresses/default/${addressId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to set default address";
+  }
+};
+
 export default createOrder;
+

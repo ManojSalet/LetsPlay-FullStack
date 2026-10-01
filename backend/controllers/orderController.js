@@ -103,6 +103,7 @@ exports.getAllOrders = async (req, res) => {
     const userId = req.user.id;
     const orders = await Order.find({ user: userId })
       .populate("items.product")
+      .populate("shippingAddress")
       .sort({ createdAt: -1 });
 
     res.status(200).json({ orders: orders || [] });
@@ -111,6 +112,55 @@ exports.getAllOrders = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+// Customer: Cancel an order (Allowed only when Pending or Processing)
+exports.cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const userId = req.user.id;
+    const { reason = "Cancelled by customer" } = req.body;
+
+    const order = await Order.findOne({ _id: orderId, user: userId });
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.status === "Delivered" || order.status === "Cancelled") {
+      return res.status(400).json({
+        message: `Cannot cancel an order that is already ${order.status.toLowerCase()}`,
+      });
+    }
+
+    order.status = "Cancelled";
+    order.orderStatus = "Cancelled";
+    order.statusHistory.push({
+      status: "Cancelled",
+      timestamp: new Date(),
+      note: reason,
+    });
+
+    await order.save();
+
+    // Restock product inventory
+    for (const item of order.items) {
+      if (item.product) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { qty: item.quantity },
+        });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Order cancelled successfully",
+      order,
+    });
+  } catch (error) {
+    console.error("Error in cancelOrder:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 
 // Admin: View all orders across store
 exports.adminGetAllOrders = async (req, res) => {

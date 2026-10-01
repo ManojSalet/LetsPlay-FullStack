@@ -21,6 +21,7 @@ import SearchResults from "./components/Search/SearchResults";
 import NotFound from "./components/NotFound/NotFound";
 import AdminRoute from "./components/Admin/AdminRoute";
 import AdminLayout from "./components/Admin/AdminLayout";
+import Profile from "./components/Profile/Profile";
 
 function App() {
   return (
@@ -56,7 +57,10 @@ function MainLayout() {
     "/checkout",
     "/ordersummary",
     "/search",
+    "/profile",
+    "/orderhistory",
   ];
+
 
   return (
     <>
@@ -93,7 +97,12 @@ function MainLayout() {
             path="/orderhistory"
             element={<ProtectedRoutes element={<OrderHistory />} />}
           />
+          <Route
+            path="/profile"
+            element={<ProtectedRoutes element={<Profile />} />}
+          />
           <Route path="/search" element={<SearchResults />} />
+
 
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signin />} />

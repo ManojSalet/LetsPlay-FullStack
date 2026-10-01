@@ -2,7 +2,7 @@
 
 > **Repository**: [`ManojSalet/LetsPlay-FullStack`](https://github.com/ManojSalet/LetsPlay-FullStack.git)  
 > **Tech Stack**: Vite 5 + React 18 + Tailwind CSS | Node.js + Express 4 | MongoDB + Mongoose 8  
-> **Active Sprint**: **Phase 4 — Customer Account Hub, Visual Order Tracking & Address Book**  
+> **Active Sprint**: **Phase 5 — Administrative Customer & User Management (`AdminCustomers.jsx`)**  
 > **Last Updated**: October 2026  
 
 ---
@@ -16,38 +16,52 @@ To maintain engineering discipline and prevent feature drift, both developer and
 
 ---
 
-## 🎯 Current Active Sprint: Phase 4 — Customer Account Hub & Order Lifecycle
+## 🎯 Current Active Sprint: Phase 5 — Administrative Customer & User Management
 
-**Goal**: Deliver a first-class customer portal allowing users to manage their profile, track orders with a visual multi-step progress stepper, and maintain a saved address book.
+**Goal**: Provide store administrators complete visibility over registered customers, spending habits, and account moderation.
+- [ ] **Task 5.1: Admin "Customers" Data Table (`AdminCustomers.jsx`)**
+  - [ ] Add 5th navigation tab to [AdminLayout.jsx](file:///d:/Study/MCA/Project/Let'sPlay/frontend/src/components/Admin/AdminLayout.jsx).
+  - [ ] Searchable data table with search by Name, Email, or Mobile Number.
+  - [ ] Customer Lifetime Value (LTV) metrics: Total Orders Placed and Gross Revenue Contributed.
+  - [ ] Registration date and email verification status badges.
+- [ ] **Task 5.2: Customer Details & Inspection Modal**
+  - [ ] Modal to inspect a customer's full order history, saved addresses, and active carts.
+  - [ ] Account status moderation: Toggle account active status (`Active` vs. `Suspended`).
 
-- [ ] **Task 4.1: Customer Account Profile Hub (`/profile`)**
-  - [ ] Create `frontend/src/components/Profile/Profile.jsx` with responsive Tailwind UI.
-  - [ ] Account Overview Card: User Avatar, Name, Email, Mobile number, Account Role badge, and Member Since date.
-  - [ ] Profile Edit Form: Inline modal/form to update Name and Mobile number.
-  - [ ] Security Section: "Change Password" form requiring current password verification before updating.
-  - [ ] Quick Metric Counters: Total Orders Placed, Wishlist Items Count, Saved Addresses Count.
+---
 
-- [ ] **Task 4.2: Visual 4-Step Order Tracking System**
-  - [ ] Upgrade `OrderHistory.js` and `OrderItems.js` into an interactive order tracking experience.
-  - [ ] Display formatted human-readable Order Number (`LP-YYYYMMDD-XXXX`) prominently.
-  - [ ] Interactive 4-Stage Visual Progress Stepper:
+## 📦 Recently Completed Sprint: Phase 4 — Customer Account Hub & Order Lifecycle
+
+- [x] **Task 4.1: Customer Account Profile Hub (`/profile`)**
+  - [x] Created `frontend/src/components/Profile/Profile.jsx` with responsive Tailwind UI.
+  - [x] Account Overview Card: User Avatar with initials, Name, Email, Mobile number, Account Role badge, and Member Since date.
+  - [x] Profile Edit Form: Inline modal to update Name and Mobile number with validation.
+  - [x] Security Section: "Change Password" modal with current password validation and show/hide password toggles.
+  - [x] Quick Metric Counters: Total Orders Placed, Wishlist Items Count, Saved Addresses Count.
+
+- [x] **Task 4.2: Visual 4-Step Order Tracking System**
+  - [x] Upgraded `OrderHistory.js` and created `OrderCard.jsx` with interactive tracking experience.
+  - [x] Formatted human-readable Order Number (`LP-YYYYMMDD-XXXX`) displayed with copy/inspect clarity.
+  - [x] Interactive 4-Stage Visual Progress Stepper:
     $$\text{Order Placed} \longrightarrow \text{Processing} \longrightarrow \text{Shipped} \longrightarrow \text{Delivered}$$
-  - [ ] Status Audit Timeline: Surface timestamps and dispatch notes from the `statusHistory` array.
-  - [ ] Itemized purchase cards with product thumbnail, SKU, brand, quantity, and line price calculation.
-  - [ ] Delivery address card displaying recipient contact info and destination details.
-  - [ ] Payment status pill (Paid via UPI / Pending COD).
+  - [x] Status Audit Timeline: Collapsible drawer surfacing timestamps and dispatch notes from `statusHistory`.
+  - [x] Itemized purchase cards with product thumbnail, SKU, brand, quantity, and line price calculation.
+  - [x] Delivery address card displaying recipient contact info and destination details.
+  - [x] Formatted printable tax invoice modal with print button (`window.print()`).
+  - [x] Order cancellation modal with reason selector and automated inventory restocking for pending/processing orders.
 
-- [ ] **Task 4.3: Standalone Customer Address Book Manager**
-  - [ ] Create `AddressManager.jsx` accessible directly from the Customer Profile.
-  - [ ] Data grid displaying all saved addresses with "Default" badge indicator.
-  - [ ] "Add New Address" modal with full address fields (House/Flat No, Street, Landmark, Pincode, District, State).
-  - [ ] "Edit Address" and "Delete Address" actions with confirmation prompts.
-  - [ ] "Set as Default Delivery Address" one-click action.
+- [x] **Task 4.3: Standalone Customer Address Book Manager**
+  - [x] Created `AddressManager.jsx` accessible directly from the Customer Profile.
+  - [x] Card grid displaying all saved addresses with "Default" badge indicator.
+  - [x] "Add New Address" modal with full address fields (House/Flat No, Street, Landmark, Pincode, District, State).
+  - [x] "Edit Address" and "Delete Address" actions with confirmation prompts.
+  - [x] "Set as Default Delivery Address" one-click action.
 
-- [ ] **Task 4.4: Storefront Navigation & Profile Dropdown Integration**
-  - [ ] Update `Navbar.js` with a unified User Account dropdown menu when logged in.
-  - [ ] Links to: "My Profile", "My Orders & Tracking", "Saved Addresses", "Admin Panel" (for admins only), and "Logout".
-  - [ ] Ensure full mobile drawer compatibility with touch-friendly navigation.
+- [x] **Task 4.4: Storefront Navigation & Profile Dropdown Integration**
+  - [x] Updated `Navbar.js` with a unified User Account dropdown menu when logged in.
+  - [x] Links to: "My Profile & Settings", "Orders & Live Tracking", "Saved Addresses", "Admin Panel" (for admins only), and "Logout".
+  - [x] Full mobile drawer compatibility with touch-friendly navigation.
+
 
 ---
 
@@ -106,4 +120,6 @@ To maintain engineering discipline and prevent feature drift, both developer and
 | **Phase 4: Visual Admin Panel Implementation** | Responsive Admin Dashboard (`/admin`), Metrics Overview, Product management, Order dispatching, Catalog taxonomy. | Sept 2026 | `05e95e0` |
 | **Phase 5: Enterprise Enhancements** | 19 legacy orders normalized (`LP-YYYYMMDD-XXXX`), Product soft deletion (`isDeleted` / restore action), Multer direct image uploads. | Sept 2026 | `9939430` |
 | **Phase 6: Database Clean-Slate Reset & Seeder** | Cleaned legacy test data, upgraded `seedData.js` to seed 2 accounts, categories, sports, equipment, products, orders, reviews, addresses, and wishlist. | Sept 2026 | `f7aa514` |
-| **Phase 7: Enterprise Multi-Tab Session Isolation** | `sessionStorage` for Admin vs `localStorage` for Customer; isolated request interceptor eliminating cross-tab token overwrites. | Sept 2026 | `bb46339` |
+| **Phase 4: Customer Account Hub & Order Lifecycle** | Customer profile hub (`/profile`), 4-stage visual order tracking stepper, address book manager, tax invoice print modal, cancellation with inventory restocking, user dropdown menu in navbar. | Oct 2026 | `e6cf56b` |
+
+

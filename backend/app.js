@@ -13,6 +13,7 @@ const cartRoutes = require('./routes/cartRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const userRoutes = require('./routes/userRoutes');
 const path = require('path');
 require('dotenv').config();
 
@@ -37,7 +38,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Route handlers
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/addresses', addressRoutes);
+app.use('/api/address', addressRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/sports', sportRoutes);
 app.use('/api/equipment', equipmentRoutes);
